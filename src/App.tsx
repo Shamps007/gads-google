@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
 import { CustomCursor } from './components/CustomCursor';
 import { NoiseOverlay } from './components/NoiseOverlay';
-import { IconArrowRight, IconStar, IconMail } from '@tabler/icons-react';
+import { IconArrowRight, IconStar, IconMail, IconTriangleFilled } from '@tabler/icons-react';
 
 export default function App() {
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCookieBanner, setShowCookieBanner] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -13,19 +14,19 @@ export default function App() {
     setIsSubmitting(true);
 
     const form = e.currentTarget;
-    const formData = new URLSearchParams();
-    formData.append("nome", (document.getElementById("nome") as HTMLInputElement).value);
-    formData.append("whatsapp", (document.getElementById("whatsapp") as HTMLInputElement).value);
-    formData.append("email", (document.getElementById("email") as HTMLInputElement).value);
-    formData.append("empresa", (document.getElementById("empresa") as HTMLInputElement).value);
-    formData.append("faturamento", (document.getElementById("faturamento") as HTMLSelectElement).value);
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    
+    formData.forEach((value, key) => {
+      params.append(key, value.toString());
+    });
 
     const urlWebhook = "https://script.google.com/macros/s/AKfycby_Z2SoJz3TWaiDsjgjZmZETLJ8TjcAQAyhcWdY1ciOc81FcPcJCsGu3PLAf8OZeTT4/exec";
 
     try {
       const response = await fetch(urlWebhook, {
         method: "POST",
-        body: formData
+        body: params
       });
       
       await response.text();
@@ -108,7 +109,21 @@ export default function App() {
       {/* Header & Navigation */}
       <header className="sticky top-4 z-50 mx-4 md:mx-8">
         <div className="flex items-center justify-between bg-[#F0F5FF]/90 backdrop-blur-[24px] border-2 border-[#09090B] rounded-xl px-6 py-4">
-          <div className="font-display text-2xl tracking-tighter uppercase">GADS ASSESSORIA DIGITAL</div>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <img 
+                src="https://raw.githubusercontent.com/stackblitz/stackblitz-images/main/gads-logo-placeholder.png" 
+                alt="GADS Logo" 
+                className="h-10 w-auto"
+                onError={(e) => {
+                  // Fallback if the specific URL doesn't exist
+                  e.currentTarget.src = "https://via.placeholder.com/150x50/09090B/FFFFFF?text=GADS";
+                }}
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <div className="font-display text-2xl tracking-tighter uppercase hidden lg:block">GADS ASSESSORIA DIGITAL</div>
+          </div>
           <nav className="hidden md:flex items-center gap-8 font-bold">
             <a href="#sobre" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SOBRE</a>
             <a href="#servicos" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SERVIÇOS</a>
@@ -127,7 +142,7 @@ export default function App() {
 
       <main className="px-4 md:px-8 pb-24">
         {/* Hero Section */}
-        <section className="mt-12 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+        <section id="contato" className="mt-12 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
           <div className="md:col-span-7 relative">
             <div className="absolute -top-8 -left-4 bg-[#0055FF] text-white border-2 border-[#09090B] px-4 py-1 rounded-full -rotate-2 font-bold z-10">
               ASSESSORIA DIGITAL
@@ -190,6 +205,53 @@ export default function App() {
               </div>
               <p className="font-bold text-lg leading-tight">"O volume de clientes aumentou absurdamente."</p>
             </div>
+          </div>
+        </section>
+
+        {/* Centered Form Section */}
+        <section id="contratar" className="mt-32 max-w-3xl mx-auto">
+          <div className="rounded-[32px] border-2 border-[#09090B] bg-white p-6 md:p-12 hard-shadow-lg relative z-10">
+            <h3 className="font-display text-4xl uppercase tracking-tighter mb-4 text-center">Vamos Começar?</h3>
+            <p className="font-medium mb-10 opacity-80 text-center text-lg">Preencha os dados abaixo e nossa equipe entrará em contato em até 24h para uma análise estratégica gratuita.</p>
+            
+            <form id="form-leads-centered" onSubmit={handleFormSubmit}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="nome-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Nome Completo *</label>
+                    <input type="text" id="nome-c" name="nome" required placeholder="Ex: João Silva" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
+                  </div>
+
+                  <div>
+                    <label htmlFor="whatsapp-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">WhatsApp *</label>
+                    <input type="tel" id="whatsapp-c" name="whatsapp" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
+                  </div>
+
+                  <div>
+                    <label htmlFor="email-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Melhor E-mail *</label>
+                    <input type="email" id="email-c" name="email" required placeholder="seu@email.com" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
+                  </div>
+
+                  <div>
+                    <label htmlFor="empresa-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Nome da Empresa *</label>
+                    <input type="text" id="empresa-c" name="empresa" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <label htmlFor="faturamento-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Faturação Mensal *</label>
+                  <select id="faturamento-c" name="faturamento" required defaultValue="" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium appearance-none transition-shadow">
+                      <option value="" disabled>Selecione uma opção...</option>
+                      <option value="Até R$ 10.000">Até R$ 10.000</option>
+                      <option value="De R$ 10.000 a R$ 50.000">De R$ 10.000 a R$ 50.000</option>
+                      <option value="De R$ 50.000 a R$ 100.000">De R$ 50.000 a R$ 100.000</option>
+                      <option value="Acima de R$ 100.000">Acima de R$ 100.000</option>
+                  </select>
+                </div>
+
+                <button type="submit" disabled={isSubmitting} className="w-full mt-8 bg-[#09090B] text-[#0055FF] px-8 py-5 rounded-xl border-2 border-[#09090B] brutal-btn-lg font-display text-xl tracking-wide uppercase disabled:opacity-70 disabled:cursor-not-allowed transition-all">
+                  {isSubmitting ? "A enviar dados..." : "Solicitar Análise Gratuita"}
+                </button>
+            </form>
           </div>
         </section>
 
@@ -299,7 +361,7 @@ export default function App() {
                     {expandedCard === i ? 'FECHAR' : 'SABER MAIS'}
                   </button>
                   <a 
-                    href="#footer"
+                    href="#contratar"
                     className="flex-1 py-3 md:py-4 border-2 border-[#09090B] rounded-xl font-bold uppercase tracking-wide transition-all text-sm md:text-base bg-[#0055FF] text-white hover:bg-[#09090B] flex items-center justify-center text-center"
                   >
                     CONTRATAR
@@ -319,12 +381,6 @@ export default function App() {
             <p className="text-lg max-w-sm mb-8 font-mono">
               Assessoria e Negócios Digitais. Colocando sua empresa no topo das buscas.
             </p>
-            <div className="flex gap-2">
-              <input type="email" placeholder="SEU E-MAIL" className="bg-transparent border-2 border-[#F0F5FF] rounded-xl px-4 py-3 outline-none focus:border-[#0055FF] font-mono w-full max-w-xs" />
-              <button className="bg-[#0055FF] text-white px-6 py-3 rounded-xl border-2 border-[#0055FF] font-bold hover:bg-transparent hover:text-[#0055FF] transition-colors">
-                <IconMail />
-              </button>
-            </div>
           </div>
           
           <div>
@@ -355,6 +411,32 @@ export default function App() {
           </div>
         </div>
       </footer>
+
+      {/* Cookie Banner */}
+      {showCookieBanner && (
+        <div className="fixed bottom-4 left-4 right-4 z-[100] md:left-auto md:right-8 md:max-w-md">
+          <div className="bg-[#F0F5FF] border-2 border-[#09090B] p-6 rounded-2xl hard-shadow-lg">
+            <h4 className="font-display text-xl uppercase tracking-tighter mb-2">Privacidade & Cookies</h4>
+            <p className="font-mono text-xs mb-4 opacity-80">
+              Utilizamos cookies para melhorar sua experiência e analisar o tráfego do site. Ao continuar navegando, você concorda com nossa política de privacidade.
+            </p>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setShowCookieBanner(false)}
+                className="flex-1 bg-[#09090B] text-[#F0F5FF] py-2 rounded-lg font-bold text-sm hover:bg-[#0055FF] transition-colors"
+              >
+                ACEITAR
+              </button>
+              <button 
+                onClick={() => setShowCookieBanner(false)}
+                className="flex-1 border-2 border-[#09090B] py-2 rounded-lg font-bold text-sm hover:bg-[#09090B] hover:text-[#F0F5FF] transition-colors"
+              >
+                RECUSAR
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
