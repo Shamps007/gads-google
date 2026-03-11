@@ -1,13 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CustomCursor } from './components/CustomCursor';
 import { NoiseOverlay } from './components/NoiseOverlay';
 import { IconArrowRight, IconStar, IconMail, IconTriangleFilled } from '@tabler/icons-react';
+import { trackEvent } from './utils/fbTracking';
 
 export default function App() {
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCookieBanner, setShowCookieBanner] = useState(true);
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    trackEvent('PageView');
+  }, []);
 
   const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,8 +22,20 @@ export default function App() {
     const formData = new FormData(form);
     const params = new URLSearchParams();
     
+    const data: Record<string, string> = {};
     formData.forEach((value, key) => {
       params.append(key, value.toString());
+      data[key] = value.toString();
+    });
+
+    // Track Lead event via CAPI and Pixel
+    trackEvent('Lead', {
+      em: data.email,
+      ph: data.whatsapp,
+      fn: data.nome
+    }, {
+      content_name: 'Análise Gratuita',
+      content_category: 'Leads'
     });
 
     const urlWebhook = "https://script.google.com/macros/s/AKfycby_Z2SoJz3TWaiDsjgjZmZETLJ8TjcAQAyhcWdY1ciOc81FcPcJCsGu3PLAf8OZeTT4/exec";
@@ -107,23 +124,16 @@ export default function App() {
       <CustomCursor />
 
       {/* Header & Navigation */}
-      <header className="sticky top-4 z-50 mx-4 md:mx-8">
-        <div className="flex items-center justify-between bg-[#F0F5FF]/90 backdrop-blur-[24px] border-2 border-[#09090B] rounded-xl px-6 py-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              <img 
-                src="https://raw.githubusercontent.com/stackblitz/stackblitz-images/main/gads-logo-placeholder.png" 
-                alt="GADS Logo" 
-                className="h-10 w-auto"
-                onError={(e) => {
-                  // Fallback if the specific URL doesn't exist
-                  e.currentTarget.src = "https://via.placeholder.com/150x50/09090B/FFFFFF?text=GADS";
-                }}
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <div className="font-display text-2xl tracking-tighter uppercase hidden lg:block">GADS ASSESSORIA DIGITAL</div>
-          </div>
+      <header className="sticky top-4 z-50 mx-2 md:mx-8">
+        <div className="flex items-center justify-between bg-[#F0F5FF]/90 backdrop-blur-[24px] border-2 border-[#09090B] rounded-xl px-3 py-2 md:px-6 md:py-4">
+          <a href="/" className="flex items-center gap-4 md:ml-10">
+            <img 
+              src="/logo-gads.png" 
+              alt="GADS Logo" 
+              className="h-12 md:h-20 w-auto"
+              referrerPolicy="no-referrer"
+            />
+          </a>
           <nav className="hidden md:flex items-center gap-8 font-bold">
             <a href="#sobre" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SOBRE</a>
             <a href="#servicos" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SERVIÇOS</a>
@@ -377,7 +387,12 @@ export default function App() {
       <footer id="footer" className="bg-[#09090B] text-[#F0F5FF] pt-20 pb-10 px-4 md:px-8 border-t-2 border-[#09090B]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-2">
-            <h2 className="font-display text-6xl uppercase tracking-tighter mb-6 text-[#0055FF]">GADS ASSESSORIA DIGITAL</h2>
+            <img 
+              src="/logo-gads.png" 
+              alt="GADS Logo" 
+              className="h-20 md:h-32 w-auto mb-6 md:ml-10"
+              referrerPolicy="no-referrer"
+            />
             <p className="text-lg max-w-sm mb-8 font-mono">
               Assessoria e Negócios Digitais. Colocando sua empresa no topo das buscas.
             </p>

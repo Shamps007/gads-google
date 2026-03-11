@@ -6,6 +6,8 @@ export const CustomCursor = () => {
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
+    document.documentElement.classList.add('has-custom-cursor');
+    
     const updateMousePosition = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -28,6 +30,7 @@ export const CustomCursor = () => {
     window.addEventListener('mouseover', handleMouseOver);
 
     return () => {
+      document.documentElement.classList.remove('has-custom-cursor');
       window.removeEventListener('mousemove', updateMousePosition);
       window.removeEventListener('mouseover', handleMouseOver);
     };

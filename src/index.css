@@ -35,6 +35,9 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+html.has-custom-cursor {
   cursor: none;
 }
 
