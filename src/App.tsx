@@ -108,7 +108,7 @@ export default function App() {
       {/* Header & Navigation */}
       <header className="sticky top-4 z-50 mx-4 md:mx-8">
         <div className="flex items-center justify-between bg-[#F0F5FF]/90 backdrop-blur-[24px] border-2 border-[#09090B] rounded-xl px-6 py-4">
-          <div className="font-display text-2xl tracking-tighter uppercase">GADS</div>
+          <div className="font-display text-2xl tracking-tighter uppercase">GADS ASSESSORIA DIGITAL</div>
           <nav className="hidden md:flex items-center gap-8 font-bold">
             <a href="#sobre" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SOBRE</a>
             <a href="#servicos" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SERVIÇOS</a>
@@ -315,7 +315,7 @@ export default function App() {
       <footer id="footer" className="bg-[#09090B] text-[#F0F5FF] pt-20 pb-10 px-4 md:px-8 border-t-2 border-[#09090B]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-2">
-            <h2 className="font-display text-6xl uppercase tracking-tighter mb-6 text-[#0055FF]">GADS</h2>
+            <h2 className="font-display text-6xl uppercase tracking-tighter mb-6 text-[#0055FF]">GADS ASSESSORIA DIGITAL</h2>
             <p className="text-lg max-w-sm mb-8 font-mono">
               Assessoria e Negócios Digitais. Colocando sua empresa no topo das buscas.
             </p>
