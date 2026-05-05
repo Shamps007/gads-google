@@ -1,26 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Dela Gothic One", system-ui, sans-serif;
-  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Clash Display", system-ui, sans-serif;
+  --font-sans: "Clash Display", system-ui, sans-serif;
 
-  --color-paper: #F8F4E8;
-  --color-ink: #09090B;
-  --color-acid: #D2E823;
+  --color-brand: #ffffff;
+  --color-brand-dark: #cccccc;
+  --color-ink: #ffffff;
+  --color-paper: #050505;
+  --color-surface: #0a0a0a;
 
-  --animate-glitch: glitch 0.3s infinite;
-  --animate-marquee: marquee 20s linear infinite;
-  --animate-float: float 3s ease-in-out infinite;
-
-  @keyframes glitch {
-    0% { transform: translate(0, 0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0, 0); }
-  }
+  --animate-marquee: marquee 30s linear infinite;
+  --animate-float: float 4s ease-in-out infinite;
 
   @keyframes marquee {
     0% { transform: translateX(0); }
@@ -35,10 +27,7 @@
 
 html {
   scroll-behavior: smooth;
-}
-
-html.has-custom-cursor {
-  cursor: none;
+  background-color: var(--color-paper);
 }
 
 body {
@@ -46,49 +35,7 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   overflow-x: hidden;
-}
-
-/* Hard shadow utilities */
-.hard-shadow {
-  box-shadow: 4px 4px 0px 0px var(--color-ink);
-}
-.hard-shadow-sm {
-  box-shadow: 2px 2px 0px 0px var(--color-ink);
-}
-.hard-shadow-lg {
-  box-shadow: 8px 8px 0px 0px var(--color-ink);
-}
-
-/* Button hover/active states */
-.brutal-btn {
-  box-shadow: 4px 4px 0px 0px var(--color-ink);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-.brutal-btn:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px 0px var(--color-ink);
-}
-.brutal-btn:active {
-  transform: translate(0px, 4px);
-  box-shadow: 0px 0px 0px 0px var(--color-ink);
-}
-
-.brutal-btn-lg {
-  box-shadow: 8px 8px 0px 0px var(--color-ink);
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-.brutal-btn-lg:hover {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0px 0px var(--color-ink);
-}
-.brutal-btn-lg:active {
-  transform: translate(0px, 4px);
-  box-shadow: 0px 0px 0px 0px var(--color-ink);
-}
-
-/* Glitch text hover */
-.hover-glitch:hover {
-  animation: glitch 0.3s infinite;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Hide scrollbar for horizontal scroll */
@@ -102,6 +49,10 @@ body {
 
 /* Dot pattern */
 .bg-dots {
-  background-image: radial-gradient(var(--color-ink) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+.bg-dots-light {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }

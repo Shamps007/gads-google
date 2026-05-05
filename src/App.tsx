@@ -1,454 +1,421 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { CustomCursor } from './components/CustomCursor';
-import { NoiseOverlay } from './components/NoiseOverlay';
-import { IconArrowRight, IconStar, IconMail, IconTriangleFilled } from '@tabler/icons-react';
-import { trackEvent } from './utils/fbTracking';
+import React, { useState, useEffect, useRef } from 'react';
+import { IconArrowRight, IconTarget, IconChartBar, IconBriefcase, IconStar } from '@tabler/icons-react';
 
 export default function App() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const playCount = useRef(0);
+
+  const handleVideoEnded = () => {
+    playCount.current += 1;
+    if (playCount.current < 2 && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play();
+    }
+  };
+
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCookieBanner, setShowCookieBanner] = useState(true);
-  const sliderRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    trackEvent('PageView');
-  }, []);
-
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const params = new URLSearchParams();
-    
-    const data: Record<string, string> = {};
-    formData.forEach((value, key) => {
-      params.append(key, value.toString());
-      data[key] = value.toString();
-    });
-
-    // Track Lead event via CAPI and Pixel
-    trackEvent('Lead', {
-      em: data.email,
-      ph: data.whatsapp,
-      fn: data.nome
-    }, {
-      content_name: 'Análise Gratuita',
-      content_category: 'Leads'
-    });
-
-    const urlWebhook = "https://script.google.com/macros/s/AKfycby_Z2SoJz3TWaiDsjgjZmZETLJ8TjcAQAyhcWdY1ciOc81FcPcJCsGu3PLAf8OZeTT4/exec";
-
-    try {
-      const response = await fetch(urlWebhook, {
-        method: "POST",
-        body: params
-      });
-      
-      await response.text();
-      
-      alert("Registo realizado com sucesso!");
-      form.reset();
-    } catch (error) {
-      console.error("Erro no envio:", error);
-      alert("Falha na comunicação. Tente novamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const scrollSlider = (direction: 'left' | 'right') => {
-    if (sliderRef.current) {
-      const scrollAmount = direction === 'left' ? -320 : 320;
-      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
 
   const metodoGads = [
     {
-      title: "Diagnóstico estratégico da presença digital",
       tag: "ETAPA 1",
+      title: "Diagnóstico estratégico da presença digital",
       shortDesc: "Análise completa do posicionamento digital.",
       fullDesc: "Antes de iniciar qualquer campanha, realizamos uma análise completa do posicionamento digital da clínica, identificando oportunidades de crescimento, concorrência e canais mais estratégicos para atrair novos pacientes.",
-      imgUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Campanhas orientadas por dados",
-      tag: "ETAPA 2",
-      shortDesc: "Monitoramento constante com métricas reais.",
-      fullDesc: "Todas as campanhas são monitoradas constantemente com base em métricas reais. Utilizamos dados de comportamento, conversão e performance para otimizar anúncios e aumentar a geração de pacientes qualificados.",
-      imgUrl: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Domínio do Google na sua região",
-      tag: "ETAPA 3",
-      shortDesc: "Posicionamento local estratégico.",
-      fullDesc: "Aplicamos estratégias específicas para posicionar sua clínica entre os primeiros resultados quando pacientes da sua cidade pesquisam por tratamentos ou especialidades médicas.",
-      imgUrl: "https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      title: "Captação direta de pacientes",
-      tag: "ETAPA 4",
-      shortDesc: "Contatos via WhatsApp, formulário ou ligação.",
-      fullDesc: "Estruturamos campanhas focadas em gerar contatos diretos via WhatsApp, formulário ou ligação, facilitando o primeiro contato entre paciente e clínica.",
-      imgUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
       highlight: true
     },
     {
-      title: "Estratégia completa de funil",
+      tag: "ETAPA 2",
+      title: "Campanhas orientadas por dados",
+      shortDesc: "Monitoramento constante com métricas reais.",
+      fullDesc: "Todas as campanhas são monitoradas constantemente com base em métricas reais. Utilizamos dados de comportamento, conversão e performance para otimizar anúncios e aumentar a geração de pacientes qualificados."
+    },
+    {
+      tag: "ETAPA 3",
+      title: "Domínio do Google na sua região",
+      shortDesc: "Posicionamento local estratégico.",
+      fullDesc: "Aplicamos estratégias específicas para posicionar sua clínica entre os primeiros resultados quando pacientes da sua cidade pesquisam por tratamentos ou especialidades médicas."
+    },
+    {
+      tag: "ETAPA 4",
+      title: "Captação direta de pacientes",
+      shortDesc: "Contatos via WhatsApp, formulário ou ligação.",
+      fullDesc: "Estruturamos campanhas focadas em gerar contatos diretos via WhatsApp, formulário ou ligação, facilitando o primeiro contato entre paciente e clínica."
+    },
+    {
       tag: "ETAPA 5",
+      title: "Estratégia completa de funil",
       shortDesc: "Campanhas para todas as etapas da jornada.",
-      fullDesc: "Criamos campanhas para todas as etapas da jornada do paciente: descoberta, consideração e decisão, garantindo um fluxo contínuo de novos interessados.",
-      imgUrl: "https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=800&q=80"
+      fullDesc: "Criamos campanhas para todas as etapas da jornada do paciente: descoberta, consideração e decisão, garantindo um fluxo contínuo de novos interessados."
     },
     {
-      title: "Otimização contínua das campanhas",
       tag: "ETAPA 6",
+      title: "Otimização contínua das campanhas",
       shortDesc: "Ajustes constantes para reduzir custos.",
-      fullDesc: "Realizamos ajustes constantes em anúncios, públicos e estratégias para reduzir custos e aumentar o número de pacientes gerados.",
-      imgUrl: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80"
+      fullDesc: "Realizamos ajustes constantes em anúncios, públicos e estratégias para reduzir custos e aumentar o número de pacientes gerados."
     },
     {
-      title: "Escala previsível de resultados",
       tag: "ETAPA 7",
+      title: "Escala previsível de resultados",
       shortDesc: "Aumento de volume sem perder eficiência.",
-      fullDesc: "Depois que as campanhas atingem estabilidade, escalamos os investimentos gradualmente para aumentar o volume de novos pacientes sem perder eficiência.",
-      imgUrl: "https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&w=800&q=80"
+      fullDesc: "Depois que as campanhas atingem estabilidade, escalamos os investimentos gradualmente para aumentar o volume de novos pacientes sem perder eficiência."
     }
   ];
 
-  return (
-    <div className="relative min-h-screen bg-[#F0F5FF] text-[#09090B] font-sans selection:bg-[#0055FF] selection:text-[#F0F5FF]">
-      <NoiseOverlay />
-      <CustomCursor />
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setTimeout(() => {
+      setIsSubmitting(false);
+      alert("Recebemos sua solicitação! Em breve nossa equipe entrará em contato.");
+    }, 1500);
+  };
 
-      {/* Header & Navigation */}
-      <header className="sticky top-4 z-50 mx-2 md:mx-8">
-        <div className="flex items-center justify-between bg-[#F0F5FF]/90 backdrop-blur-[24px] border-2 border-[#09090B] rounded-xl px-3 py-2 md:px-6 md:py-4">
-          <a href="/" className="flex items-center gap-4 md:ml-10">
+  return (
+    <div className="relative min-h-screen bg-black text-white font-sans selection:bg-[#FE4701] selection:text-white">
+      {/* Header */}
+      <header className="fixed top-0 w-full z-50 bg-black/90 backdrop-blur-md border-b border-zinc-900 transition-all duration-300">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 lg:px-12 py-4">
+          <a href="/" className="flex items-center">
             <img 
               src="/logo-gads.png" 
               alt="GADS Logo" 
-              className="h-12 md:h-20 w-auto"
+              className="h-10 w-auto filter brightness-200 contrast-100 grayscale hover:grayscale-0 transition-all"
               referrerPolicy="no-referrer"
             />
           </a>
-          <nav className="hidden md:flex items-center gap-8 font-bold">
-            <a href="#sobre" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SOBRE</a>
-            <a href="#servicos" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">SERVIÇOS</a>
-            <a href="#metodo" className="hover:text-[#0055FF] hover:bg-[#09090B] px-2 py-1 transition-colors border-2 border-transparent hover:border-[#09090B]">MÉTODO GADS</a>
+          <nav className="hidden md:flex items-center gap-12 font-medium text-sm tracking-widest text-[#FE4701]">
+            <a href="#sobre" className="hover:text-white transition-colors">SOBRE</a>
+            <a href="#servicos" className="hover:text-white transition-colors">SERVIÇOS</a>
+            <a href="#metodo" className="hover:text-white transition-colors">MÉTODO GADS</a>
           </nav>
           <a 
-            href="https://api.whatsapp.com/send/?phone=5548988678207&text=ola+gostaria+de+mais+informa%C3%A7%C3%B5es&type=phone_number&app_absent=0" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="bg-[#09090B] text-[#0055FF] px-6 py-2 rounded-xl border-2 border-[#09090B] hard-shadow-sm hover:bg-[#0055FF] hover:text-[#09090B] transition-all brutal-btn font-bold inline-block"
+            href="#contato" 
+            className="bg-[#FE4701] text-white px-6 py-2.5 font-bold text-sm tracking-widest uppercase hover:bg-white hover:text-black transition-colors border border-[#FE4701]"
           >
             CONTATO
           </a>
         </div>
       </header>
 
-      <main className="px-4 md:px-8 pb-24">
+      <main className="flex flex-col">
         {/* Hero Section */}
-        <section id="contato" className="mt-12 md:mt-24 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-          <div className="md:col-span-7 relative">
-            <div className="absolute -top-8 -left-4 bg-[#0055FF] text-white border-2 border-[#09090B] px-4 py-1 rounded-full -rotate-2 font-bold z-10">
-              ASSESSORIA DIGITAL
-            </div>
-            <h1 className="font-display text-[3.5rem] md:text-[5.5rem] lg:text-[6.5rem] leading-[0.85] tracking-tighter uppercase hover-glitch mb-8">
-              SUA EMPRESA NO TOPO<br />DO GOOGLE
-            </h1>
-            <p className="text-xl md:text-2xl font-medium max-w-lg mb-10">
-              Transformamos presença digital em resultados reais com estratégias validadas de tráfego e SEO.
-            </p>
-            <a 
-              href="https://api.whatsapp.com/send/?phone=5548988678207&text=ola+gostaria+de+mais+informa%C3%A7%C3%B5es&type=phone_number&app_absent=0" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="bg-[#09090B] text-[#0055FF] px-8 py-5 rounded-xl border-2 border-[#09090B] brutal-btn-lg font-display text-xl tracking-wide flex items-center gap-4 w-fit"
-            >
-              QUERO VENDER MAIS <IconArrowRight stroke={3} />
-            </a>
-          </div>
-          <div className="md:col-span-5 relative mt-12 md:mt-0">
-            <div className="rounded-[32px] border-2 border-[#09090B] bg-white p-6 md:p-8 hard-shadow-lg relative z-10">
-              <h3 className="font-display text-3xl uppercase tracking-tighter mb-2">Análise Gratuita</h3>
-              <p className="font-medium mb-6 opacity-80">Preencha os dados abaixo e entraremos em contato em até 24h.</p>
-              
-              <div className="mt-6">
-                <form id="form-leads" onSubmit={handleFormSubmit}>
-                    
-                    <label htmlFor="nome" className="block mb-2 font-bold uppercase text-sm tracking-wide">Nome Completo *</label>
-                    <input type="text" id="nome" name="nome" required placeholder="Ex: João Silva" className="w-full px-4 py-3 mb-4 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-
-                    <label htmlFor="whatsapp" className="block mb-2 font-bold uppercase text-sm tracking-wide">WhatsApp *</label>
-                    <input type="tel" id="whatsapp" name="whatsapp" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 mb-4 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-
-                    <label htmlFor="email" className="block mb-2 font-bold uppercase text-sm tracking-wide">Melhor E-mail *</label>
-                    <input type="email" id="email" name="email" required placeholder="seu@email.com" className="w-full px-4 py-3 mb-4 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-
-                    <label htmlFor="empresa" className="block mb-2 font-bold uppercase text-sm tracking-wide">Nome da Empresa *</label>
-                    <input type="text" id="empresa" name="empresa" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 mb-4 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-
-                    <label htmlFor="faturamento" className="block mb-2 font-bold uppercase text-sm tracking-wide">Faturação Mensal *</label>
-                    <select id="faturamento" name="faturamento" required defaultValue="" className="w-full px-4 py-3 mb-6 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium appearance-none transition-shadow">
-                        <option value="" disabled>Selecione uma opção...</option>
-                        <option value="Até R$ 10.000">Até R$ 10.000</option>
-                        <option value="De R$ 10.000 a R$ 50.000">De R$ 10.000 a R$ 50.000</option>
-                        <option value="De R$ 50.000 a R$ 100.000">De R$ 50.000 a R$ 100.000</option>
-                        <option value="Acima de R$ 100.000">Acima de R$ 100.000</option>
-                    </select>
-
-                    <button type="submit" id="btn-submit" disabled={isSubmitting} className="w-full bg-[#09090B] text-[#0055FF] px-8 py-4 rounded-xl border-2 border-[#09090B] brutal-btn font-display text-lg tracking-wide uppercase disabled:opacity-70 disabled:cursor-not-allowed transition-all">
-                      {isSubmitting ? "A enviar dados..." : "Quero Receber Contacto"}
-                    </button>
-                    
-                </form>
-              </div>
-            </div>
+        <section id="sobre" className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
+          {/* Background Video */}
+          <video 
+            ref={videoRef}
+            src="/video.mp4" 
+            muted 
+            playsInline
+            autoPlay
+            onEnded={handleVideoEnded}
+            className="hidden md:block absolute inset-0 object-cover w-full h-full opacity-40 mix-blend-screen scale-105" 
+          />
             
-            <div className="absolute -bottom-16 -left-32 bg-[#0055FF] text-white border-2 border-[#09090B] p-6 rounded-2xl hard-shadow-lg animate-float max-w-[240px] z-20 hidden lg:block">
-              <div className="flex gap-1 mb-2">
-                {[...Array(5)].map((_, i) => <IconStar key={i} className="fill-[#09090B]" size={20} />)}
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80 pointer-events-none"></div>
+
+            {/* Hero Text */}
+            <div className="relative z-10 flex flex-col items-center text-center px-6 lg:px-12 pt-16">
+              <div className="inline-block border border-[#FE4701]/30 bg-[#FE4701]/10 text-[#FE4701] px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-sm">
+                ASSESSORIA DIGITAL
               </div>
-              <p className="font-bold text-lg leading-tight">"O volume de clientes aumentou absurdamente."</p>
+              <h1 className="font-display font-bold text-5xl md:text-7xl lg:text-[7rem] leading-[0.9] tracking-tight mb-8">
+                SUA EMPRESA NO TOPO<br />
+                <span className="text-[#FE4701]">DO GOOGLE.</span>
+              </h1>
+              <p className="text-zinc-300 text-lg md:text-2xl font-medium max-w-3xl mx-auto mb-12 leading-relaxed">
+                Transformamos presença digital em resultados reais com estratégias validadas de tráfego e SEO.
+              </p>
+              
+              <a 
+                href="#contato"
+                className="bg-[#FE4701] text-white px-10 py-5 font-bold text-lg tracking-widest uppercase flex items-center gap-4 hover:bg-white hover:text-black transition-all duration-300 pointer-events-auto border border-[#FE4701]"
+              >
+                QUERO VENDER MAIS <IconArrowRight size={24} />
+              </a>
+
+              <p className="mt-12 text-xs font-bold tracking-widest uppercase text-zinc-500 animate-pulse">
+                Role para interagir
+              </p>
+
+              {/* Floating review card */}
+              <div className="absolute top-[75%] -right-4 md:-right-12 lg:right-0 bg-black/80 backdrop-blur-md border border-zinc-800 p-6 shadow-2xl animate-float max-w-[240px] hidden lg:block z-20">
+                <div className="flex gap-1 mb-2">
+                  {[...Array(5)].map((_, i) => <IconStar key={i} className="text-[#FE4701] fill-[#FE4701]" size={20} />)}
+                </div>
+                <p className="font-bold text-sm leading-tight italic text-zinc-200">"O volume de clientes aumentou absurdamente."</p>
+              </div>
+
             </div>
-          </div>
         </section>
 
-        {/* Centered Form Section */}
-        <section id="contratar" className="mt-32 max-w-3xl mx-auto">
-          <div className="rounded-[32px] border-2 border-[#09090B] bg-white p-6 md:p-12 hard-shadow-lg relative z-10">
-            <h3 className="font-display text-4xl uppercase tracking-tighter mb-4 text-center">Vamos Começar?</h3>
-            <p className="font-medium mb-10 opacity-80 text-center text-lg">Preencha os dados abaixo e nossa equipe entrará em contato em até 24h para uma análise estratégica gratuita.</p>
+        {/* Small transition spacing */}
+        <div className="h-12 bg-black"></div>
+
+        {/* Hero Form section matching original layout copy */}
+        <section id="contato" className="max-w-4xl mx-auto px-6 lg:px-12 pb-32 pt-16 z-10 relative">
+          <div className="bg-zinc-950 border border-zinc-800 p-8 md:p-14 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#FE4701] blur-[120px] opacity-10 rounded-full pointer-events-none"></div>
+
+            <div className="mb-10 text-center">
+              <h3 className="font-display text-4xl uppercase tracking-tighter mb-4">Análise Gratuita</h3>
+              <p className="font-medium text-zinc-400">Preencha os dados abaixo e entraremos em contato em até 24h.</p>
+            </div>
             
-            <form id="form-leads-centered" onSubmit={handleFormSubmit}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="nome-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Nome Completo *</label>
-                    <input type="text" id="nome-c" name="nome" required placeholder="Ex: João Silva" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-                  </div>
-
-                  <div>
-                    <label htmlFor="whatsapp-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">WhatsApp *</label>
-                    <input type="tel" id="whatsapp-c" name="whatsapp" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-                  </div>
-
-                  <div>
-                    <label htmlFor="email-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Melhor E-mail *</label>
-                    <input type="email" id="email-c" name="email" required placeholder="seu@email.com" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-                  </div>
-
-                  <div>
-                    <label htmlFor="empresa-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Nome da Empresa *</label>
-                    <input type="text" id="empresa-c" name="empresa" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium transition-shadow" />
-                  </div>
+            <form onSubmit={handleFormSubmit} className="relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome Completo *</label>
+                  <input type="text" required placeholder="Ex: João Silva" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
                 </div>
-
-                <div className="mt-6">
-                  <label htmlFor="faturamento-c" className="block mb-2 font-bold uppercase text-sm tracking-wide">Faturação Mensal *</label>
-                  <select id="faturamento-c" name="faturamento" required defaultValue="" className="w-full px-4 py-3 border-2 border-[#09090B] rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-[#0055FF] font-medium appearance-none transition-shadow">
-                      <option value="" disabled>Selecione uma opção...</option>
-                      <option value="Até R$ 10.000">Até R$ 10.000</option>
-                      <option value="De R$ 10.000 a R$ 50.000">De R$ 10.000 a R$ 50.000</option>
-                      <option value="De R$ 50.000 a R$ 100.000">De R$ 50.000 a R$ 100.000</option>
-                      <option value="Acima de R$ 100.000">Acima de R$ 100.000</option>
-                  </select>
+                <div>
+                  <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">WhatsApp *</label>
+                  <input type="tel" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
                 </div>
+                <div>
+                  <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Melhor E-mail *</label>
+                  <input type="email" required placeholder="seu@email.com" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
+                </div>
+                <div>
+                  <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome da Empresa *</label>
+                  <input type="text" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
+                </div>
+              </div>
 
-                <button type="submit" disabled={isSubmitting} className="w-full mt-8 bg-[#09090B] text-[#0055FF] px-8 py-5 rounded-xl border-2 border-[#09090B] brutal-btn-lg font-display text-xl tracking-wide uppercase disabled:opacity-70 disabled:cursor-not-allowed transition-all">
-                  {isSubmitting ? "A enviar dados..." : "Solicitar Análise Gratuita"}
-                </button>
+              <div className="mt-6">
+                <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Faturação Mensal *</label>
+                <select required defaultValue="" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] appearance-none font-medium transition-colors cursor-pointer">
+                    <option value="" disabled>Selecione uma opção...</option>
+                    <option value="Até R$ 10.000">Até R$ 10.000</option>
+                    <option value="De R$ 10.000 a R$ 50.000">De R$ 10.000 a R$ 50.000</option>
+                    <option value="De R$ 50.000 a R$ 100.000">De R$ 50.000 a R$ 100.000</option>
+                    <option value="Acima de R$ 100.000">Acima de R$ 100.000</option>
+                </select>
+              </div>
+
+              <button type="submit" disabled={isSubmitting} className="w-full mt-8 bg-[#FE4701] text-white px-8 py-4 font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors disabled:opacity-50">
+                {isSubmitting ? "Enviando..." : "Quero Receber Contacto"}
+              </button>
             </form>
           </div>
         </section>
 
-        {/* Marquee */}
-        <div className="mt-32 border-y-2 border-[#09090B] bg-[#0055FF] text-white py-4 overflow-hidden flex whitespace-nowrap">
-          <div className="animate-marquee flex gap-8 items-center font-display text-4xl uppercase tracking-tighter">
+        {/* Marquee Banner */}
+        <div className="w-full bg-[#FE4701] text-white py-4 overflow-hidden flex whitespace-nowrap mb-32 border-y border-zinc-900 shadow-[0_0_50px_-12px_#FE4701]">
+          <div className="animate-marquee flex gap-10 items-center font-display font-bold text-3xl uppercase tracking-widest">
             <span>TRÁFEGO PAGO</span>
-            <span>•</span>
+            <span className="text-black">•</span>
             <span>GOOGLE MEU NEGÓCIO</span>
-            <span>•</span>
+            <span className="text-black">•</span>
             <span>SEO</span>
-            <span>•</span>
+            <span className="text-black">•</span>
             <span>LANDING PAGES</span>
-            <span>•</span>
+            <span className="text-black">•</span>
             <span>TRÁFEGO PAGO</span>
-            <span>•</span>
+            <span className="text-black">•</span>
             <span>GOOGLE MEU NEGÓCIO</span>
-            <span>•</span>
+            <span className="text-black">•</span>
             <span>SEO</span>
-            <span>•</span>
+            <span className="text-black">•</span>
             <span>LANDING PAGES</span>
-            <span>•</span>
+            <span className="text-black">•</span>
           </div>
         </div>
 
-        {/* Bento Category Grid */}
-        <section id="servicos" className="mt-32">
-          <h2 className="font-display text-5xl md:text-7xl uppercase tracking-tighter mb-12 hover-glitch">NOSSAS SOLUÇÕES</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-[#09090B] text-[#F0F5FF] border-2 border-[#09090B] rounded-[32px] p-8 md:p-12 relative overflow-hidden group">
-              <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop" alt="Data" className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-overlay transition-transform duration-500 group-hover:scale-105" referrerPolicy="no-referrer" />
-              <div className="relative z-10 h-full flex flex-col justify-between min-h-[300px]">
-                <div className="bg-[#0055FF] text-white font-bold px-4 py-1 rounded-full w-fit border-2 border-[#09090B]">01</div>
-                <div>
-                  <h3 className="font-display text-4xl uppercase mb-4">Tráfego Pago</h3>
-                  <p className="text-lg max-w-md">Anúncios de alta conversão no Google Ads para quem já tem intenção de compra.</p>
+        {/* Services Section */}
+        <section id="servicos" className="max-w-7xl mx-auto px-6 lg:px-12 mb-32 z-10 relative bg-black">
+          <div className="border-b border-zinc-800 pb-8 mb-16">
+            <h3 className="font-display text-4xl lg:text-5xl font-bold uppercase tracking-tight">NOSSAS SOLUÇÕES</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-800 border border-zinc-800">
+            {[
+              {
+                icon: <IconTarget size={32} stroke={1.5} />,
+                num: "01",
+                title: "Tráfego Pago",
+                desc: "Anúncios de alta conversão no Google Ads para quem já tem intenção de compra."
+              },
+              {
+                icon: <IconChartBar size={32} stroke={1.5} />,
+                num: "02",
+                title: "Google Meu Negócio",
+                desc: "Otimização completa para dominar as buscas locais."
+              },
+              {
+                icon: <IconBriefcase size={32} stroke={1.5} />,
+                num: "03",
+                title: "SEO & Orgânico",
+                desc: "Posicionamento de longo prazo sem depender apenas de anúncios."
+              }
+            ].map((item, i) => (
+              <div key={i} className="bg-black p-10 hover:bg-zinc-950 transition-colors group">
+                <div className="flex justify-between items-start mb-8 text-zinc-500 group-hover:text-[#FE4701] transition-colors">
+                  {item.icon}
+                  <span className="font-display font-bold text-xl">{item.num}</span>
                 </div>
+                <h4 className="font-display font-bold text-2xl uppercase mb-4 tracking-wide">{item.title}</h4>
+                <p className="text-zinc-500 leading-relaxed font-medium">{item.desc}</p>
               </div>
-            </div>
-            <div className="grid grid-rows-2 gap-6">
-              <div className="bg-[#0055FF] text-white border-2 border-[#09090B] rounded-[32px] p-8 hard-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-200 bg-dots flex flex-col justify-between">
-                <div className="bg-[#09090B] text-[#F0F5FF] font-bold px-4 py-1 rounded-full w-fit border-2 border-[#09090B]">02</div>
-                <div>
-                  <h3 className="font-display text-3xl uppercase mb-2">Google Meu Negócio</h3>
-                  <p className="font-medium">Otimização completa para dominar as buscas locais.</p>
-                </div>
-              </div>
-              <div className="bg-[#F0F5FF] border-2 border-[#09090B] rounded-[32px] p-8 hard-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-200 flex flex-col justify-between">
-                <div className="bg-[#09090B] text-[#F0F5FF] font-bold px-4 py-1 rounded-full w-fit border-2 border-[#09090B]">03</div>
-                <div>
-                  <h3 className="font-display text-3xl uppercase mb-2">SEO & Orgânico</h3>
-                  <p className="font-medium">Posicionamento de longo prazo sem depender apenas de anúncios.</p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </section>
 
-        {/* Horizontal Scrolling Product Section */}
-        <section id="metodo" className="mt-32">
-          <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-12 gap-6">
-            <h2 className="font-display text-4xl md:text-7xl uppercase tracking-tighter hover-glitch">MÉTODO GADS</h2>
-            <div className="flex gap-4">
-              <button 
-                onClick={() => scrollSlider('left')}
-                className="w-12 h-12 rounded-full border-2 border-[#09090B] flex items-center justify-center hard-shadow-sm brutal-btn bg-[#F0F5FF] active:translate-y-1 active:shadow-none transition-all"
-              >
-                <IconArrowRight className="rotate-180" />
-              </button>
-              <button 
-                onClick={() => scrollSlider('right')}
-                className="w-12 h-12 rounded-full border-2 border-[#09090B] flex items-center justify-center hard-shadow-sm brutal-btn bg-[#0055FF] text-white active:translate-y-1 active:shadow-none transition-all"
-              >
-                <IconArrowRight />
-              </button>
-            </div>
+        {/* Metodo GADS */}
+        <section id="metodo" className="max-w-7xl mx-auto px-6 lg:px-12 mb-32 z-10 relative">
+          <div className="border-b border-zinc-800 pb-8 mb-16 text-center md:text-left">
+            <h3 className="font-display text-4xl lg:text-5xl font-bold uppercase tracking-tight text-[#FE4701]">MÉTODO GADS</h3>
           </div>
-          
-          <div 
-            ref={sliderRef}
-            className="flex overflow-x-auto gap-4 md:gap-6 pb-8 px-4 md:px-0 -mx-4 md:mx-0 no-scrollbar snap-x snap-mandatory scroll-smooth"
-          >
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {metodoGads.map((item, i) => (
-              <div key={i} className={`w-[85vw] md:w-[380px] flex-shrink-0 snap-center md:snap-start border-2 border-[#09090B] rounded-2xl p-5 md:p-6 flex flex-col transition-all duration-300 ${item.highlight ? 'bg-[#0055FF] text-white' : 'bg-[#F0F5FF]'} hard-shadow`}>
-                <div className="border-2 border-[#09090B] rounded-xl h-48 md:h-auto md:aspect-square mb-4 md:mb-6 bg-[#09090B] overflow-hidden relative flex-shrink-0">
-                  <img src={item.imgUrl} alt={item.title} className="w-full h-full object-cover opacity-80 mix-blend-luminosity" referrerPolicy="no-referrer" />
-                  <div className="absolute top-4 left-4 bg-[#F0F5FF] text-[#09090B] font-bold px-3 py-1 rounded-full border-2 border-[#09090B] text-xs md:text-sm">
+              <div 
+                key={i} 
+                className={`flex flex-col h-full border ${item.highlight ? 'border-[#FE4701] bg-[#FE4701]/5' : 'border-zinc-800 bg-zinc-950'} p-6 transition-colors hover:border-[#FE4701]`}
+              >
+                <div className="mb-4">
+                  <span className={`text-xs font-bold px-3 py-1 bg-black border ${item.highlight ? 'border-[#FE4701] text-[#FE4701]' : 'border-zinc-800 text-zinc-400'}`}>
                     {item.tag}
-                  </div>
-                  
-                  {/* Overlay Description on Click */}
-                  <div className={`absolute inset-0 bg-[#09090B]/95 p-4 md:p-6 flex items-center justify-center text-[#F0F5FF] transition-opacity duration-300 overflow-y-auto ${expandedCard === i ? 'opacity-100 z-20' : 'opacity-0 -z-10'}`}>
-                    <p className="font-medium text-sm md:text-lg text-center leading-relaxed">
-                      {item.fullDesc}
-                    </p>
-                  </div>
+                  </span>
                 </div>
-                
-                <h3 className="font-display text-xl md:text-2xl uppercase mb-2 leading-tight">{item.title}</h3>
-                <p className="font-medium text-sm md:text-base mb-4 md:mb-6 flex-grow opacity-80">{item.shortDesc}</p>
-                
+                <h4 className="font-display font-bold text-xl mb-3 leading-tight">{item.title}</h4>
+                <p className="text-sm mb-6 flex-grow text-zinc-500">
+                  {expandedCard === i ? item.fullDesc : item.shortDesc}
+                </p>
+
                 <div className="flex gap-2 mt-auto">
                   <button 
                     onClick={() => setExpandedCard(expandedCard === i ? null : i)}
-                    className={`flex-1 py-3 md:py-4 border-2 border-[#09090B] rounded-xl font-bold uppercase tracking-wide transition-all text-sm md:text-base ${expandedCard === i ? 'bg-[#F0F5FF] text-[#09090B]' : 'bg-[#09090B] text-[#0055FF] hover:bg-[#F0F5FF] hover:text-[#09090B]'}`}
+                    className="flex-1 py-3 bg-black border border-zinc-800 text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-white hover:border-white transition-colors"
                   >
-                    {expandedCard === i ? 'FECHAR' : 'SABER MAIS'}
+                    {expandedCard === i ? 'Recolher' : 'Saber Mais'}
                   </button>
-                  <a 
-                    href="#contratar"
-                    className="flex-1 py-3 md:py-4 border-2 border-[#09090B] rounded-xl font-bold uppercase tracking-wide transition-all text-sm md:text-base bg-[#0055FF] text-white hover:bg-[#09090B] flex items-center justify-center text-center"
-                  >
-                    CONTRATAR
+                  <a href="#contatar2" className="flex-1 py-3 bg-black border border-[#FE4701] text-xs font-bold uppercase tracking-widest text-[#FE4701] hover:bg-[#FE4701] hover:text-white transition-colors flex items-center justify-center">
+                    Contratar
                   </a>
                 </div>
               </div>
             ))}
           </div>
         </section>
+
+        {/* Second CTA Form matching the original */}
+        <section id="contatar2" className="max-w-4xl mx-auto px-6 lg:px-12 w-full mb-32 z-10 relative">
+          <div className="bg-zinc-950 border border-zinc-800 p-8 md:p-14">
+            <div className="text-center mb-10">
+               <h3 className="font-display text-3xl md:text-5xl font-bold mb-4 uppercase tracking-tight">Vamos Começar?</h3>
+               <p className="text-zinc-400 font-medium">Preencha os dados abaixo e nossa equipe entrará em contato em até 24h para uma análise estratégica gratuita.</p>
+            </div>
+            
+            <form onSubmit={handleFormSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome Completo *</label>
+                    <input type="text" required placeholder="Ex: João Silva" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
+                  </div>
+                  <div>
+                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">WhatsApp *</label>
+                    <input type="tel" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
+                  </div>
+                  <div>
+                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Melhor E-mail *</label>
+                    <input type="email" required placeholder="seu@email.com" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
+                  </div>
+                  <div>
+                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome da Empresa *</label>
+                    <input type="text" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Faturação Mensal *</label>
+                  <select required defaultValue="" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] appearance-none transition-colors cursor-pointer">
+                      <option value="" disabled>Selecione uma opção...</option>
+                      <option value="1">Até R$ 10.000</option>
+                      <option value="2">De R$ 10.000 a R$ 50.000</option>
+                      <option value="3">De R$ 50.000 a R$ 100.000</option>
+                      <option value="4">Acima de R$ 100.000</option>
+                  </select>
+                </div>
+
+                <button type="submit" disabled={isSubmitting} className="w-full mt-4 bg-white text-black px-8 py-5 font-bold tracking-widest uppercase hover:bg-[#FE4701] hover:text-white transition-colors disabled:opacity-50">
+                  {isSubmitting ? "Enviando..." : "Solicitar Análise Gratuita"}
+                </button>
+            </form>
+          </div>
+        </section>
+
       </main>
 
       {/* Footer */}
-      <footer id="footer" className="bg-[#09090B] text-[#F0F5FF] pt-20 pb-10 px-4 md:px-8 border-t-2 border-[#09090B]">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          <div className="md:col-span-2">
-            <img 
-              src="/logo-gads.png" 
-              alt="GADS Logo" 
-              className="h-20 md:h-32 w-auto mb-6 md:ml-10"
-              referrerPolicy="no-referrer"
-            />
-            <p className="text-lg max-w-sm mb-8 font-mono">
+      <footer className="bg-zinc-950 border-t border-zinc-900 pt-20 pb-10 px-6 lg:px-12">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
+          <div>
+            <div className="text-3xl font-bold tracking-widest uppercase mb-6 flex items-center gap-4">
+              <img 
+                src="/logo-gads.png" 
+                alt="GADS Logo" 
+                className="h-10 w-auto filter brightness-200 contrast-100 grayscale hover:grayscale-0 transition-all"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <p className="max-w-xs text-zinc-500 font-medium tracking-wide">
               Assessoria e Negócios Digitais. Colocando sua empresa no topo das buscas.
             </p>
           </div>
           
-          <div>
-            <h4 className="font-mono text-sm text-[#0055FF] mb-6 uppercase">Navegação</h4>
-            <ul className="space-y-4 font-display tracking-wide uppercase">
-              <li><a href="#sobre" className="hover:text-[#0055FF] transition-colors">Sobre Nós</a></li>
-              <li><a href="#servicos" className="hover:text-[#0055FF] transition-colors">Serviços</a></li>
-              <li><a href="#metodo" className="hover:text-[#0055FF] transition-colors">Método GADS</a></li>
-              <li><a href="https://api.whatsapp.com/send/?phone=5548988678207&text=ola+gostaria+de+mais+informa%C3%A7%C3%B5es&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="hover:text-[#0055FF] transition-colors">Contato</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-mono text-sm text-[#0055FF] mb-6 uppercase">Social</h4>
-            <ul className="space-y-4 font-display tracking-wide uppercase">
-              <li><a href="https://www.instagram.com/gadsagencialocal/" target="_blank" rel="noopener noreferrer" className="hover:text-[#0055FF] transition-colors">Instagram</a></li>
-              <li><a href="https://www.facebook.com/profile.php?id=61580066617531" target="_blank" rel="noopener noreferrer" className="hover:text-[#0055FF] transition-colors">Facebook</a></li>
-              <li><a href="https://api.whatsapp.com/send/?phone=5548988678207&text=ola+gostaria+de+mais+informa%C3%A7%C3%B5es&type=phone_number&app_absent=0" target="_blank" rel="noopener noreferrer" className="hover:text-[#0055FF] transition-colors">WhatsApp</a></li>
-            </ul>
+          <div className="flex flex-col md:flex-row gap-12 md:gap-24">
+            <div>
+              <h4 className="font-bold text-xs text-[#FE4701] mb-6 uppercase tracking-widest">Navegação</h4>
+              <ul className="space-y-3 font-medium text-zinc-500 text-sm">
+                <li><a href="#sobre" className="hover:text-white transition-colors">Sobre Nós</a></li>
+                <li><a href="#servicos" className="hover:text-white transition-colors">Serviços</a></li>
+                <li><a href="#metodo" className="hover:text-white transition-colors">Método GADS</a></li>
+                <li><a href="#contato" className="hover:text-white transition-colors">Contato</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold text-xs text-[#FE4701] mb-6 uppercase tracking-widest">Social</h4>
+              <ul className="space-y-3 font-medium text-zinc-500 text-sm">
+                <li><a href="https://www.instagram.com/gadsagencialocal/" className="hover:text-white transition-colors">Instagram</a></li>
+                <li><a href="https://www.facebook.com/profile.php?id=61580066617531" className="hover:text-white transition-colors">Facebook</a></li>
+                <li><a href="https://api.whatsapp.com/send/?phone=5548988678207" className="hover:text-white transition-colors">WhatsApp</a></li>
+              </ul>
+            </div>
           </div>
         </div>
         
-        <div className="max-w-7xl mx-auto border-t-2 border-[#F8F4E8]/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 font-mono text-sm opacity-60">
-          <p>© 2026 GADS. TODOS OS DIREITOS RESERVADOS.</p>
+        <div className="max-w-7xl mx-auto border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold tracking-widest uppercase text-zinc-600">
+          <p>© {new Date().getFullYear()} GADS. TODOS OS DIREITOS RESERVADOS.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-[#0055FF]">TERMOS</a>
-            <a href="#" className="hover:text-[#0055FF]">PRIVACIDADE</a>
+            <a href="#" className="hover:text-white transition-colors">TERMOS</a>
+            <a href="#" className="hover:text-white transition-colors">PRIVACIDADE</a>
           </div>
         </div>
       </footer>
 
       {/* Cookie Banner */}
       {showCookieBanner && (
-        <div className="fixed bottom-4 left-4 right-4 z-[100] md:left-auto md:right-8 md:max-w-md">
-          <div className="bg-[#F0F5FF] border-2 border-[#09090B] p-6 rounded-2xl hard-shadow-lg">
-            <h4 className="font-display text-xl uppercase tracking-tighter mb-2">Privacidade & Cookies</h4>
-            <p className="font-mono text-xs mb-4 opacity-80">
-              Utilizamos cookies para melhorar sua experiência e analisar o tráfego do site. Ao continuar navegando, você concorda com nossa política de privacidade.
-            </p>
-            <div className="flex gap-2">
-              <button 
-                onClick={() => setShowCookieBanner(false)}
-                className="flex-1 bg-[#09090B] text-[#F0F5FF] py-2 rounded-lg font-bold text-sm hover:bg-[#0055FF] transition-colors"
-              >
-                ACEITAR
-              </button>
-              <button 
-                onClick={() => setShowCookieBanner(false)}
-                className="flex-1 border-2 border-[#09090B] py-2 rounded-lg font-bold text-sm hover:bg-[#09090B] hover:text-[#F0F5FF] transition-colors"
-              >
-                RECUSAR
-              </button>
-            </div>
+        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-8 z-[100] md:max-w-md bg-zinc-950 border border-zinc-800 p-6 shadow-2xl">
+          <h4 className="font-display font-bold text-white uppercase tracking-widest mb-2 text-sm">Privacidade & Cookies</h4>
+          <p className="text-xs text-zinc-400 mb-6 leading-relaxed">
+            Utilizamos cookies para melhorar sua experiência e analisar o tráfego do site. Ao continuar navegando, você concorda com nossa política de privacidade.
+          </p>
+          <div className="flex gap-3">
+            <button 
+              onClick={() => setShowCookieBanner(false)}
+              className="flex-1 bg-[#FE4701] text-white py-2 font-bold text-xs uppercase tracking-widest hover:bg-white hover:text-black transition-colors"
+            >
+              ACEITAR
+            </button>
+            <button 
+              onClick={() => setShowCookieBanner(false)}
+              className="flex-1 bg-black text-zinc-400 border border-zinc-800 py-2 font-bold text-xs uppercase tracking-widest hover:text-white hover:border-white transition-colors"
+            >
+              RECUSAR
+            </button>
           </div>
         </div>
       )}

@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GADS NEGÓCIOS DIGITAIS</title>
     <link rel="icon" type="image/png" href="/logo-gads.png" />
+    <!-- Prevent Meta Pixel crashing on fetch override -->
+    <script>
+      try {
+        var fetchDesc = Object.getOwnPropertyDescriptor(window, 'fetch');
+        if (fetchDesc && !fetchDesc.set && fetchDesc.configurable) {
+          Object.defineProperty(window, 'fetch', {
+            get: fetchDesc.get,
+            set: function() { console.warn('Ignored attempt to set window.fetch'); },
+            configurable: true,
+            enumerable: fetchDesc.enumerable
+          });
+        }
+      } catch (e) {}
+    </script>
     <!-- Meta Pixel Code -->
     <script>
     !function(f,b,e,v,n,t,s)
