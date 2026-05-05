@@ -110,7 +110,7 @@ export default function App() {
             playsInline
             autoPlay
             onEnded={handleVideoEnded}
-            className="hidden md:block absolute inset-0 object-cover w-full h-full opacity-40 mix-blend-screen scale-105" 
+            className="absolute inset-0 object-cover w-full h-full opacity-40 mix-blend-screen scale-105" 
           />
             
             {/* Gradient Overlay */}
@@ -292,7 +292,7 @@ export default function App() {
                   >
                     {expandedCard === i ? 'Recolher' : 'Saber Mais'}
                   </button>
-                  <a href="#contatar2" className="flex-1 py-3 bg-black border border-[#FE4701] text-xs font-bold uppercase tracking-widest text-[#FE4701] hover:bg-[#FE4701] hover:text-white transition-colors flex items-center justify-center">
+                  <a href="#contato" className="flex-1 py-3 bg-black border border-[#FE4701] text-xs font-bold uppercase tracking-widest text-[#FE4701] hover:bg-[#FE4701] hover:text-white transition-colors flex items-center justify-center">
                     Contratar
                   </a>
                 </div>
@@ -301,51 +301,6 @@ export default function App() {
           </div>
         </section>
 
-        {/* Second CTA Form matching the original */}
-        <section id="contatar2" className="max-w-4xl mx-auto px-6 lg:px-12 w-full mb-32 z-10 relative">
-          <div className="bg-zinc-950 border border-zinc-800 p-8 md:p-14">
-            <div className="text-center mb-10">
-               <h3 className="font-display text-3xl md:text-5xl font-bold mb-4 uppercase tracking-tight">Vamos Começar?</h3>
-               <p className="text-zinc-400 font-medium">Preencha os dados abaixo e nossa equipe entrará em contato em até 24h para uma análise estratégica gratuita.</p>
-            </div>
-            
-            <form onSubmit={handleFormSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome Completo *</label>
-                    <input type="text" required placeholder="Ex: João Silva" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
-                  </div>
-                  <div>
-                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">WhatsApp *</label>
-                    <input type="tel" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
-                  </div>
-                  <div>
-                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Melhor E-mail *</label>
-                    <input type="email" required placeholder="seu@email.com" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
-                  </div>
-                  <div>
-                    <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome da Empresa *</label>
-                    <input type="text" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] transition-colors" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Faturação Mensal *</label>
-                  <select required defaultValue="" className="w-full px-4 py-3 bg-black border border-zinc-800 text-white focus:outline-none focus:border-[#FE4701] appearance-none transition-colors cursor-pointer">
-                      <option value="" disabled>Selecione uma opção...</option>
-                      <option value="1">Até R$ 10.000</option>
-                      <option value="2">De R$ 10.000 a R$ 50.000</option>
-                      <option value="3">De R$ 50.000 a R$ 100.000</option>
-                      <option value="4">Acima de R$ 100.000</option>
-                  </select>
-                </div>
-
-                <button type="submit" disabled={isSubmitting} className="w-full mt-4 bg-white text-black px-8 py-5 font-bold tracking-widest uppercase hover:bg-[#FE4701] hover:text-white transition-colors disabled:opacity-50">
-                  {isSubmitting ? "Enviando..." : "Solicitar Análise Gratuita"}
-                </button>
-            </form>
-          </div>
-        </section>
 
       </main>
 
