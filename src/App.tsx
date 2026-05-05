@@ -110,7 +110,7 @@ export default function App() {
             playsInline
             autoPlay
             onEnded={handleVideoEnded}
-            className="absolute inset-0 object-cover w-full h-full opacity-40 mix-blend-screen scale-105" 
+            className="absolute inset-0 object-contain md:object-cover w-full h-full opacity-40 mix-blend-screen scale-[1.15] md:scale-105" 
           />
             
             {/* Gradient Overlay */}
