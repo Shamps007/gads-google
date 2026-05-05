@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IconArrowRight, IconTarget, IconChartBar, IconBriefcase, IconStar } from '@tabler/icons-react';
+import { motion } from 'motion/react';
 
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -81,7 +82,7 @@ export default function App() {
             <img 
               src="/logo-gads.png" 
               alt="GADS Logo" 
-              className="h-10 w-auto filter brightness-200 contrast-100 grayscale hover:grayscale-0 transition-all"
+              className="h-10 w-auto transition-all"
               referrerPolicy="no-referrer"
             />
           </a>
@@ -101,7 +102,8 @@ export default function App() {
 
       <main className="flex flex-col">
         {/* Hero Section */}
-        <section id="sobre" className="relative w-full h-screen overflow-hidden bg-black flex items-center justify-center">
+        <section id="sobre" className="relative w-full h-[calc(100vh-72px)] mt-[72px] overflow-hidden bg-black flex items-center justify-center">
+
           {/* Background Video */}
           <video 
             ref={videoRef}
@@ -110,14 +112,24 @@ export default function App() {
             playsInline
             autoPlay
             onEnded={handleVideoEnded}
-            className="absolute inset-0 object-contain md:object-cover w-full h-full opacity-40 mix-blend-screen scale-[1.15] md:scale-105" 
+            className="absolute inset-0 object-cover object-top w-full h-full opacity-50 xl:opacity-40" 
           />
             
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/80 pointer-events-none"></div>
+            {/* Edge blending and watermark hiding overlays */}
+            <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,transparent_0%,transparent_40%,black_80%)] opacity-90"></div>
+            <div className="absolute inset-x-0 bottom-0 h-[40vh] md:h-64 bg-gradient-to-t from-black via-black/90 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-x-0 top-0 h-[10vh] md:h-24 bg-gradient-to-b from-black via-black/50 to-transparent pointer-events-none"></div>
+
+            {/* Specific Watermark Cover (Bottom Right) */}
+            <div className="absolute bottom-0 right-0 w-40 h-32 bg-gradient-to-tl from-black via-black/90 to-transparent pointer-events-none"></div>
 
             {/* Hero Text */}
-            <div className="relative z-10 flex flex-col items-center text-center px-6 lg:px-12 pt-16">
+            <motion.div 
+              className="relative z-10 flex flex-col items-center text-center px-6 lg:px-12 pt-16"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
               <div className="inline-block border border-[#FE4701]/30 bg-[#FE4701]/10 text-[#FE4701] px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-sm">
                 ASSESSORIA DIGITAL
               </div>
@@ -136,26 +148,41 @@ export default function App() {
                 QUERO VENDER MAIS <IconArrowRight size={24} />
               </a>
 
-              <p className="mt-12 text-xs font-bold tracking-widest uppercase text-zinc-500 animate-pulse">
+              <motion.p 
+                className="mt-12 text-xs font-bold tracking-widest uppercase text-zinc-500"
+                animate={{ opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
                 Role para interagir
-              </p>
+              </motion.p>
 
               {/* Floating review card */}
-              <div className="absolute top-[75%] -right-4 md:-right-12 lg:right-0 bg-black/80 backdrop-blur-md border border-zinc-800 p-6 shadow-2xl animate-float max-w-[240px] hidden lg:block z-20">
+              <motion.div 
+                className="absolute top-[75%] -right-4 md:-right-12 lg:right-0 bg-black/80 backdrop-blur-md border border-zinc-800 p-6 shadow-2xl max-w-[240px] hidden lg:block z-20"
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              >
                 <div className="flex gap-1 mb-2">
                   {[...Array(5)].map((_, i) => <IconStar key={i} className="text-[#FE4701] fill-[#FE4701]" size={20} />)}
                 </div>
                 <p className="font-bold text-sm leading-tight italic text-zinc-200">"O volume de clientes aumentou absurdamente."</p>
-              </div>
+              </motion.div>
 
-            </div>
+            </motion.div>
         </section>
 
         {/* Small transition spacing */}
         <div className="h-12 bg-black"></div>
 
         {/* Hero Form section matching original layout copy */}
-        <section id="contato" className="max-w-4xl mx-auto px-6 lg:px-12 pb-32 pt-16 z-10 relative">
+        <motion.section 
+          id="contato" 
+          className="max-w-4xl mx-auto px-6 lg:px-12 pb-32 pt-16 z-10 relative"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7 }}
+        >
           <div className="bg-zinc-950 border border-zinc-800 p-8 md:p-14 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#FE4701] blur-[120px] opacity-10 rounded-full pointer-events-none"></div>
 
@@ -200,10 +227,16 @@ export default function App() {
               </button>
             </form>
           </div>
-        </section>
+        </motion.section>
 
         {/* Marquee Banner */}
-        <div className="w-full bg-[#FE4701] text-white py-4 overflow-hidden flex whitespace-nowrap mb-32 border-y border-zinc-900 shadow-[0_0_50px_-12px_#FE4701]">
+        <motion.div 
+          className="w-full bg-[#FE4701] text-white py-4 overflow-hidden flex whitespace-nowrap mb-32 border-y border-zinc-900 shadow-[0_0_50px_-12px_#FE4701]"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1 }}
+        >
           <div className="animate-marquee flex gap-10 items-center font-display font-bold text-3xl uppercase tracking-widest">
             <span>TRÁFEGO PAGO</span>
             <span className="text-black">•</span>
@@ -222,13 +255,19 @@ export default function App() {
             <span>LANDING PAGES</span>
             <span className="text-black">•</span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Services Section */}
         <section id="servicos" className="max-w-7xl mx-auto px-6 lg:px-12 mb-32 z-10 relative bg-black">
-          <div className="border-b border-zinc-800 pb-8 mb-16">
+          <motion.div 
+            className="border-b border-zinc-800 pb-8 mb-16"
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
             <h3 className="font-display text-4xl lg:text-5xl font-bold uppercase tracking-tight">NOSSAS SOLUÇÕES</h3>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-zinc-800 border border-zinc-800">
             {[
@@ -251,29 +290,46 @@ export default function App() {
                 desc: "Posicionamento de longo prazo sem depender apenas de anúncios."
               }
             ].map((item, i) => (
-              <div key={i} className="bg-black p-10 hover:bg-zinc-950 transition-colors group">
+              <motion.div 
+                key={i} 
+                className="bg-black p-10 hover:bg-zinc-950 transition-colors group"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+              >
                 <div className="flex justify-between items-start mb-8 text-zinc-500 group-hover:text-[#FE4701] transition-colors">
                   {item.icon}
                   <span className="font-display font-bold text-xl">{item.num}</span>
                 </div>
                 <h4 className="font-display font-bold text-2xl uppercase mb-4 tracking-wide">{item.title}</h4>
                 <p className="text-zinc-500 leading-relaxed font-medium">{item.desc}</p>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
 
         {/* Metodo GADS */}
         <section id="metodo" className="max-w-7xl mx-auto px-6 lg:px-12 mb-32 z-10 relative">
-          <div className="border-b border-zinc-800 pb-8 mb-16 text-center md:text-left">
+          <motion.div 
+            className="border-b border-zinc-800 pb-8 mb-16 text-center md:text-left"
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6 }}
+          >
             <h3 className="font-display text-4xl lg:text-5xl font-bold uppercase tracking-tight text-[#FE4701]">MÉTODO GADS</h3>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {metodoGads.map((item, i) => (
-              <div 
+              <motion.div 
                 key={i} 
                 className={`flex flex-col h-full border ${item.highlight ? 'border-[#FE4701] bg-[#FE4701]/5' : 'border-zinc-800 bg-zinc-950'} p-6 transition-colors hover:border-[#FE4701]`}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
               >
                 <div className="mb-4">
                   <span className={`text-xs font-bold px-3 py-1 bg-black border ${item.highlight ? 'border-[#FE4701] text-[#FE4701]' : 'border-zinc-800 text-zinc-400'}`}>
@@ -296,23 +352,28 @@ export default function App() {
                     Contratar
                   </a>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
 
-
       </main>
 
       {/* Footer */}
-      <footer className="bg-zinc-950 border-t border-zinc-900 pt-20 pb-10 px-6 lg:px-12">
+      <motion.footer 
+        className="bg-zinc-950 border-t border-zinc-900 pt-20 pb-10 px-6 lg:px-12"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
           <div>
             <div className="text-3xl font-bold tracking-widest uppercase mb-6 flex items-center gap-4">
               <img 
                 src="/logo-gads.png" 
                 alt="GADS Logo" 
-                className="h-10 w-auto filter brightness-200 contrast-100 grayscale hover:grayscale-0 transition-all"
+                className="h-10 w-auto transition-all"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -349,7 +410,7 @@ export default function App() {
             <a href="#" className="hover:text-white transition-colors">PRIVACIDADE</a>
           </div>
         </div>
-      </footer>
+      </motion.footer>
 
       {/* Cookie Banner */}
       {showCookieBanner && (
