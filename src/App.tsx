@@ -1,14 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IconArrowRight, IconTarget, IconChartBar, IconBriefcase, IconStar } from '@tabler/icons-react';
 import { motion } from 'motion/react';
+import { CinematicFooter } from '@/components/ui/motion-footer';
 
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const playCount = useRef(0);
+  const [videoEnded, setVideoEnded] = useState(false);
+
+  // Reduzido para 500ms para o texto começar a aparecer logo no inicio
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVideoEnded(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleVideoEnded = () => {
-    playCount.current += 1;
-    if (playCount.current < 2 && videoRef.current) {
+    setVideoEnded(true);
+    // Restart video for continuous ambient loop
+    if (videoRef.current) {
       videoRef.current.currentTime = 0;
       videoRef.current.play();
     }
@@ -82,7 +92,7 @@ export default function App() {
             <img 
               src="/logo-gads.png" 
               alt="GADS Logo" 
-              className="h-10 w-auto transition-all"
+              className="h-12 md:h-16 w-auto transition-all"
               referrerPolicy="no-referrer"
             />
           </a>
@@ -100,7 +110,7 @@ export default function App() {
         </div>
       </header>
 
-      <main className="flex flex-col">
+      <main className="flex flex-col relative z-10 bg-black">
         {/* Hero Section */}
         <section id="sobre" className="relative w-full h-[calc(100vh-72px)] mt-[72px] overflow-hidden bg-black flex items-center justify-center">
 
@@ -125,42 +135,63 @@ export default function App() {
 
             {/* Hero Text */}
             <motion.div 
-              className="relative z-10 flex flex-col items-center text-center px-6 lg:px-12 pt-16"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
+              className="relative z-10 flex flex-col items-center text-center px-6 lg:px-12 pt-16 min-h-[50vh]"
+              initial="hidden"
+              animate={videoEnded ? "visible" : "hidden"}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.2
+                  }
+                }
+              }}
             >
-              <div className="inline-block border border-[#FE4701]/30 bg-[#FE4701]/10 text-[#FE4701] px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-sm">
+              <motion.div 
+                variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="inline-block border border-[#FE4701]/30 bg-[#FE4701]/10 text-[#FE4701] px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-sm"
+              >
                 ASSESSORIA DIGITAL
-              </div>
-              <h1 className="font-display font-bold text-5xl md:text-7xl lg:text-[7rem] leading-[0.9] tracking-tight mb-8">
+              </motion.div>
+              <motion.h1 
+                variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="font-display font-bold text-5xl md:text-7xl lg:text-[7rem] leading-[0.9] tracking-tight mb-8"
+              >
                 SUA EMPRESA NO TOPO<br />
                 <span className="text-[#FE4701]">DO GOOGLE.</span>
-              </h1>
-              <p className="text-zinc-300 text-lg md:text-2xl font-medium max-w-3xl mx-auto mb-12 leading-relaxed">
+              </motion.h1>
+              <motion.p 
+                variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="text-zinc-300 text-lg md:text-2xl font-medium max-w-3xl mx-auto mb-12 leading-relaxed"
+              >
                 Transformamos presença digital em resultados reais com estratégias validadas de tráfego e SEO.
-              </p>
+              </motion.p>
               
-              <a 
+              <motion.a 
                 href="#contato"
+                variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
                 className="bg-[#FE4701] text-white px-10 py-5 font-bold text-lg tracking-widest uppercase flex items-center gap-4 hover:bg-white hover:text-black transition-all duration-300 pointer-events-auto border border-[#FE4701]"
               >
                 QUERO VENDER MAIS <IconArrowRight size={24} />
-              </a>
+              </motion.a>
 
               <motion.p 
+                variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: [0.5, 1, 0.5], y: 0, transition: { opacity: { repeat: Infinity, duration: 2 } } } }}
+                transition={{ y: { duration: 0.8, ease: "easeOut" } }}
                 className="mt-12 text-xs font-bold tracking-widest uppercase text-zinc-500"
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
               >
                 Role para interagir
               </motion.p>
 
               {/* Floating review card */}
               <motion.div 
+                variants={{ hidden: { opacity: 0, scale: 0.8, y: 0 }, visible: { opacity: 1, scale: 1, y: [0, -10, 0], transition: { y: { repeat: Infinity, duration: 4, ease: "easeInOut" } } } }}
                 className="absolute top-[75%] -right-4 md:-right-12 lg:right-0 bg-black/80 backdrop-blur-md border border-zinc-800 p-6 shadow-2xl max-w-[240px] hidden lg:block z-20"
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               >
                 <div className="flex gap-1 mb-2">
                   {[...Array(5)].map((_, i) => <IconStar key={i} className="text-[#FE4701] fill-[#FE4701]" size={20} />)}
@@ -359,58 +390,7 @@ export default function App() {
 
       </main>
 
-      {/* Footer */}
-      <motion.footer 
-        className="bg-zinc-950 border-t border-zinc-900 pt-20 pb-10 px-6 lg:px-12"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
-      >
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
-          <div>
-            <div className="text-3xl font-bold tracking-widest uppercase mb-6 flex items-center gap-4">
-              <img 
-                src="/logo-gads.png" 
-                alt="GADS Logo" 
-                className="h-10 w-auto transition-all"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-            <p className="max-w-xs text-zinc-500 font-medium tracking-wide">
-              Assessoria e Negócios Digitais. Colocando sua empresa no topo das buscas.
-            </p>
-          </div>
-          
-          <div className="flex flex-col md:flex-row gap-12 md:gap-24">
-            <div>
-              <h4 className="font-bold text-xs text-[#FE4701] mb-6 uppercase tracking-widest">Navegação</h4>
-              <ul className="space-y-3 font-medium text-zinc-500 text-sm">
-                <li><a href="#sobre" className="hover:text-white transition-colors">Sobre Nós</a></li>
-                <li><a href="#servicos" className="hover:text-white transition-colors">Serviços</a></li>
-                <li><a href="#metodo" className="hover:text-white transition-colors">Método GADS</a></li>
-                <li><a href="#contato" className="hover:text-white transition-colors">Contato</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-xs text-[#FE4701] mb-6 uppercase tracking-widest">Social</h4>
-              <ul className="space-y-3 font-medium text-zinc-500 text-sm">
-                <li><a href="https://www.instagram.com/gadsagencialocal/" className="hover:text-white transition-colors">Instagram</a></li>
-                <li><a href="https://www.facebook.com/profile.php?id=61580066617531" className="hover:text-white transition-colors">Facebook</a></li>
-                <li><a href="https://api.whatsapp.com/send/?phone=5548988678207" className="hover:text-white transition-colors">WhatsApp</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-bold tracking-widest uppercase text-zinc-600">
-          <p>© {new Date().getFullYear()} GADS. TODOS OS DIREITOS RESERVADOS.</p>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">TERMOS</a>
-            <a href="#" className="hover:text-white transition-colors">PRIVACIDADE</a>
-          </div>
-        </div>
-      </motion.footer>
+      <CinematicFooter />
 
       {/* Cookie Banner */}
       {showCookieBanner && (
