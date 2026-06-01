@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IconArrowRight, IconTarget, IconChartBar, IconBriefcase, IconStar } from '@tabler/icons-react';
 import { motion, useInView } from 'motion/react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import { CinematicFooter } from '@/components/ui/motion-footer';
 
 function Counter({ from = 0, to, duration = 2, suffix = "", prefix = "" }: { from?: number, to: number, duration?: number, suffix?: string, prefix?: string }) {
@@ -39,7 +40,30 @@ function Counter({ from = 0, to, duration = 2, suffix = "", prefix = "" }: { fro
   return <span ref={nodeRef}>{prefix}{from}{suffix}</span>;
 }
 
-export default function App() {
+function Obrigado() {
+  return (
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8">
+      <div className="max-w-md w-full bg-zinc-950 border border-zinc-800 p-8 md:p-14 text-center">
+        <a href="/" className="inline-block mb-12">
+          <img 
+            src="/logo-gads.png" 
+            alt="GADS Logo" 
+            className="h-16 mx-auto w-auto transition-all"
+            referrerPolicy="no-referrer"
+          />
+        </a>
+        <h1 className="font-display text-4xl uppercase tracking-tighter mb-4">Obrigado!</h1>
+        <p className="font-medium text-zinc-400 mb-8">Recebemos a sua mensagem. Logo a equipe da Gads entrará em contato.</p>
+        <a href="/" className="bg-[#FE4701] text-white px-8 py-4 font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors block">
+          Voltar ao início
+        </a>
+      </div>
+    </div>
+  );
+}
+
+function Home() {
+  const navigate = useNavigate();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoEnded, setVideoEnded] = useState(false);
 
@@ -115,8 +139,8 @@ export default function App() {
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
-      alert("Recebemos sua solicitação! Em breve nossa equipe entrará em contato.");
-    }, 1500);
+      navigate("/obrigado");
+    }, 1000);
   };
 
   return (
@@ -443,7 +467,7 @@ export default function App() {
 
       {/* Floating WhatsApp Button */}
       <a 
-        href="https://wa.me/554888678207" 
+        href="https://wa.me/554888678207?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20seu%20servi%C3%A7o%21" 
         target="_blank" 
         rel="noopener noreferrer"
         className="fixed bottom-4 left-4 md:bottom-8 md:left-8 z-[90] bg-[#25D366] text-white p-3 md:p-4 rounded-full shadow-lg hover:scale-110 hover:shadow-[0_0_20px_rgba(37,211,102,0.5)] transition-all duration-300 flex items-center justify-center group"
@@ -485,3 +509,13 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/obrigado" element={<Obrigado />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}

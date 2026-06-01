@@ -344,7 +344,7 @@ export function CinematicFooter() {
                 <MagneticButton as="a" href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="footer-glass-pill px-5 py-2.5 md:px-6 md:py-3 rounded-full text-zinc-400 font-medium text-xs md:text-sm hover:text-white">
                   Instagram
                 </MagneticButton>
-                <MagneticButton as="a" href="https://wa.me/554888678207" target="_blank" rel="noopener noreferrer" className="footer-glass-pill px-5 py-2.5 md:px-6 md:py-3 rounded-full text-zinc-400 font-medium text-xs md:text-sm hover:text-white">
+                <MagneticButton as="a" href="https://wa.me/554888678207?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20seu%20servi%C3%A7o%21" target="_blank" rel="noopener noreferrer" className="footer-glass-pill px-5 py-2.5 md:px-6 md:py-3 rounded-full text-zinc-400 font-medium text-xs md:text-sm hover:text-white">
                   WhatsApp
                 </MagneticButton>
               </div>
