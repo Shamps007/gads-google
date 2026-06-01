@@ -1,7 +1,43 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { IconArrowRight, IconTarget, IconChartBar, IconBriefcase, IconStar } from '@tabler/icons-react';
-import { motion } from 'motion/react';
+import { motion, useInView } from 'motion/react';
 import { CinematicFooter } from '@/components/ui/motion-footer';
+
+function Counter({ from = 0, to, duration = 2, suffix = "", prefix = "" }: { from?: number, to: number, duration?: number, suffix?: string, prefix?: string }) {
+  const nodeRef = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(nodeRef, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    const node = nodeRef.current;
+    if (node && isInView) {
+      let start = performance.now();
+      let frame: number;
+
+      const update = (currentTime: number) => {
+        const elapsed = (currentTime - start) / 1000;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Easing function: easeOutExpo
+        const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        
+        const currentVal = from + (to - from) * easeOutExpo;
+        node.textContent = `${prefix}${Math.round(currentVal)}${suffix}`;
+
+        if (progress < 1) {
+          frame = requestAnimationFrame(update);
+        } else {
+          node.textContent = `${prefix}${to}${suffix}`;
+        }
+      };
+
+      frame = requestAnimationFrame(update);
+
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [from, to, duration, prefix, suffix, isInView]);
+
+  return <span ref={nodeRef}>{prefix}{from}{suffix}</span>;
+}
 
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -112,7 +148,7 @@ export default function App() {
 
       <main className="flex flex-col relative z-10 bg-black">
         {/* Hero Section */}
-        <section id="sobre" className="relative w-full h-[calc(100vh-72px)] mt-[72px] overflow-hidden bg-black flex items-center justify-center">
+        <section id="sobre" className="relative w-full min-h-[calc(100vh-72px)] py-16 md:py-24 mt-[72px] overflow-hidden bg-black flex items-center justify-center">
 
           {/* Background Video */}
           <video 
@@ -151,52 +187,65 @@ export default function App() {
               <motion.div 
                 variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="inline-block border border-[#FE4701]/30 bg-[#FE4701]/10 text-[#FE4701] px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-8 backdrop-blur-sm"
+                className="inline-flex items-center gap-2 border border-[#FE4701]/30 bg-[#FE4701]/5 px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold tracking-widest uppercase mb-6 sm:mb-8 backdrop-blur-sm"
               >
-                ASSESSORIA DIGITAL
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FE4701]" />
+                <span className="text-[#FE4701]">PERFORMANCE · AQUISIÇÃO · RESULTADO</span>
               </motion.div>
               <motion.h1 
                 variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="font-display font-bold text-5xl md:text-7xl lg:text-[7rem] leading-[0.9] tracking-tight mb-8"
+                className="font-display font-medium text-4xl sm:text-5xl md:text-6xl lg:text-[5.5rem] leading-[1.1] tracking-tight mb-6 sm:mb-8 max-w-4xl mx-auto"
               >
-                SUA EMPRESA NO TOPO<br />
-                <span className="text-[#FE4701]">DO GOOGLE.</span>
+                + de 120 lojas de tintas<br />
+                ativas nesse<br />
+                momento conosco<br />
+                no <span className="text-[#FE4701] font-bold">topo do Google</span>
               </motion.h1>
               <motion.p 
                 variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="text-zinc-300 text-lg md:text-2xl font-medium max-w-3xl mx-auto mb-12 leading-relaxed"
+                className="text-zinc-400 text-sm sm:text-base md:text-xl font-medium max-w-2xl mx-auto mb-10 md:mb-12 leading-relaxed px-4"
               >
-                Transformamos presença digital em resultados reais com estratégias validadas de tráfego e SEO.
+                Se sua loja de tintas não está no topo do Google, você está financiando o crescimento do seu concorrente.
               </motion.p>
               
-              <motion.a 
-                href="#contato"
+              <motion.div 
                 variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="bg-[#FE4701] text-white px-10 py-5 font-bold text-lg tracking-widest uppercase flex items-center gap-4 hover:bg-white hover:text-black transition-all duration-300 pointer-events-auto border border-[#FE4701]"
+                className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pointer-events-auto w-full px-6"
               >
-                QUERO VENDER MAIS <IconArrowRight size={24} />
-              </motion.a>
+                <a 
+                  href="#contato"
+                  className="bg-[#FE4701] text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold text-[11px] sm:text-xs md:text-sm tracking-widest uppercase flex items-center justify-center gap-2 sm:gap-3 hover:bg-white hover:text-black transition-all duration-300 w-full sm:w-auto"
+                >
+                  AGENDAR DIAGNÓSTICO GRATUITO <IconArrowRight size={18} />
+                </a>
+                <a 
+                  href="#sobre"
+                  className="bg-zinc-900/50 border border-zinc-800 text-zinc-300 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-bold text-[11px] sm:text-xs md:text-sm tracking-widest uppercase hover:bg-zinc-800 hover:text-white transition-all duration-300 w-full sm:w-auto flex items-center justify-center"
+                >
+                  CONHECER O MÉTODO
+                </a>
+              </motion.div>
 
-              <motion.p 
-                variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: [0.5, 1, 0.5], y: 0, transition: { opacity: { repeat: Infinity, duration: 2 } } } }}
-                transition={{ y: { duration: 0.8, ease: "easeOut" } }}
-                className="mt-12 text-xs font-bold tracking-widest uppercase text-zinc-500"
-              >
-                Role para interagir
-              </motion.p>
-
-              {/* Floating review card */}
               <motion.div 
-                variants={{ hidden: { opacity: 0, scale: 0.8, y: 0 }, visible: { opacity: 1, scale: 1, y: [0, -10, 0], transition: { y: { repeat: Infinity, duration: 4, ease: "easeInOut" } } } }}
-                className="absolute top-[75%] -right-4 md:-right-12 lg:right-0 bg-black/80 backdrop-blur-md border border-zinc-800 p-6 shadow-2xl max-w-[240px] hidden lg:block z-20"
+                variants={{ hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                className="flex items-center justify-center gap-6 sm:gap-12 md:gap-20 mt-12 sm:mt-16 text-center pt-8 w-full max-w-3xl"
               >
-                <div className="flex gap-1 mb-2">
-                  {[...Array(5)].map((_, i) => <IconStar key={i} className="text-[#FE4701] fill-[#FE4701]" size={20} />)}
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#FE4701] font-display mb-1"><Counter to={120} suffix="+" duration={2} /></div>
+                  <div className="text-[9px] sm:text-xs text-zinc-500 uppercase tracking-widest font-bold">Lojas ativas</div>
                 </div>
-                <p className="font-bold text-sm leading-tight italic text-zinc-200">"O volume de clientes aumentou absurdamente."</p>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#FE4701] font-display mb-1"><Counter to={5} suffix=" anos" duration={2} /></div>
+                  <div className="text-[9px] sm:text-xs text-zinc-500 uppercase tracking-widest font-bold">No mercado</div>
+                </div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-[#FE4701] font-display mb-1">Top <Counter to={1} duration={2} /></div>
+                  <div className="text-[9px] sm:text-xs text-zinc-500 uppercase tracking-widest font-bold">Posições no Google</div>
+                </div>
               </motion.div>
 
             </motion.div>
@@ -392,9 +441,26 @@ export default function App() {
 
       <CinematicFooter />
 
+      {/* Floating WhatsApp Button */}
+      <a 
+        href="https://wa.me/554888678207" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        className="fixed bottom-4 left-4 md:bottom-8 md:left-8 z-[90] bg-[#25D366] text-white p-3 md:p-4 rounded-full shadow-lg hover:scale-110 hover:shadow-[0_0_20px_rgba(37,211,102,0.5)] transition-all duration-300 flex items-center justify-center group"
+        aria-label="Falar no WhatsApp"
+      >
+        <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" className="opacity-100 group-hover:hidden">
+          <path d="M3 21l1.65 -3.8a9 9 0 1 1 3.4 2.9l-5.05 .9"></path>
+          <path d="M9 10a.5 .5 0 0 0 1 0v-1a.5 .5 0 0 0 -1 0v1a5 5 0 0 0 5 5h1a.5 .5 0 0 0 0 -1h-1a.5 .5 0 0 0 0 1"></path>
+        </svg>
+        <svg viewBox="0 0 24 24" width="28" height="28" stroke="none" fill="currentColor" className="hidden group-hover:block">
+           <path d="M16.6 14c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6 .1-.2 .2-.6 .8-.8 1-.1 .2-.3 .2-.5 .1-.7-.3-1.4-.7-2-1.2-.5-.5-1-1.1-1.4-1.7-.1-.2 0-.4 .1-.5 .1-.1 .2-.3 .4-.4 .1-.1 .2-.3 .2-.4 .1-.2 0-.4 0-.5C10 9 9.3 7.6 9 7c-.1-.4-.3-.4-.5-.4h-.5c-.2 0-.5 .1-.8 .4-.3 .3-.8 .8-.8 2s.8 2.3 2 3.9c1 1.5 2.9 4.8 6.4 6.3 2.1 .9 2.8 1 3.8 .8 .8-.1 1.9-.9 2.4-1.9.4-.9 .4-1.7 .3-1.9-.2-.2-.5-.3-.7-.4zM12 2C6.5 2 2 6.5 2 12c0 1.8 .5 3.5 1.3 5L2 22l5.1-1.3C8.5 21.5 10.2 22 12 22c5.5 22 10-4.5 10-10S17.5 2 12 2zm0 18.2c-1.5 0-2.9-.4-4.1-1.1l-.3-.2-3.2 .8 .8-3.1-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z" />
+        </svg>
+      </a>
+
       {/* Cookie Banner */}
       {showCookieBanner && (
-        <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-8 z-[100] md:max-w-md bg-zinc-950 border border-zinc-800 p-6 shadow-2xl">
+        <div className="fixed bottom-4 right-4 z-[100] w-[calc(100%-32px)] sm:w-auto sm:max-w-md bg-zinc-950 border border-zinc-800 p-6 shadow-2xl">
           <h4 className="font-display font-bold text-white uppercase tracking-widest mb-2 text-sm">Privacidade & Cookies</h4>
           <p className="text-xs text-zinc-400 mb-6 leading-relaxed">
             Utilizamos cookies para melhorar sua experiência e analisar o tráfego do site. Ao continuar navegando, você concorda com nossa política de privacidade.

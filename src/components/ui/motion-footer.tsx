@@ -341,10 +341,10 @@ export function CinematicFooter() {
 
               {/* Secondary Text Links */}
               <div className="flex flex-wrap justify-center gap-3 md:gap-6 w-full mt-2 font-display">
-                <MagneticButton as="a" href="#" className="footer-glass-pill px-5 py-2.5 md:px-6 md:py-3 rounded-full text-zinc-400 font-medium text-xs md:text-sm hover:text-white">
+                <MagneticButton as="a" href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="footer-glass-pill px-5 py-2.5 md:px-6 md:py-3 rounded-full text-zinc-400 font-medium text-xs md:text-sm hover:text-white">
                   Instagram
                 </MagneticButton>
-                <MagneticButton as="a" href="#" className="footer-glass-pill px-5 py-2.5 md:px-6 md:py-3 rounded-full text-zinc-400 font-medium text-xs md:text-sm hover:text-white">
+                <MagneticButton as="a" href="https://wa.me/554888678207" target="_blank" rel="noopener noreferrer" className="footer-glass-pill px-5 py-2.5 md:px-6 md:py-3 rounded-full text-zinc-400 font-medium text-xs md:text-sm hover:text-white">
                   WhatsApp
                 </MagneticButton>
               </div>
