@@ -134,7 +134,7 @@ function Home() {
     }
   ];
 
-  const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwVvlavLElgNP9l_UNssPRV6RPwEKgAG6iw2Lkc28WAfnOATMVvUDCz2EyD__EhKh_u/exec';
+  const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwpCdDtqlpVaNwCFKEhe3UYjWdOuRKqXfJ3T62cfuAUcq_oihFS1F5lyzh2pdwHV3Ni/exec';
 
   const handleFormSubmit = async (e: any) => {
     e.preventDefault(); // Impede a página de piscar/recarregar
