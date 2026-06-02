@@ -134,13 +134,35 @@ function Home() {
     }
   ];
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwti_tIT08qsIjUJ0XBco5SGTZLGqGi9ME2wZ5numJA0gYtEdX6wNxQ5p8f1rI2a4Qh/exec';
+
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setTimeout(() => {
+    
+    try {
+      const form = e.currentTarget;
+      const formData = new FormData(form);
+      const response = await fetch(URL_WEBHOOK, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const result = await response.text();
+      
+      if (result === 'Sucesso') {
+        alert("Dados enviados com sucesso! Entraremos em contato em até 24h.");
+        form.reset();
+        navigate("/obrigado");
+      } else {
+        alert("Erro ao enviar: " + result);
+      }
+    } catch (error) {
+      alert("Erro ao enviar. Tente novamente mais tarde.");
+      console.error(error);
+    } finally {
       setIsSubmitting(false);
-      navigate("/obrigado");
-    }, 1000);
+    }
   };
 
   return (
@@ -299,30 +321,29 @@ function Home() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome Completo *</label>
-                  <input type="text" required placeholder="Ex: João Silva" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
+                  <input type="text" name="nome" required placeholder="Ex: João Silva" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
                 </div>
                 <div>
                   <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">WhatsApp *</label>
-                  <input type="tel" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
+                  <input type="text" name="whatsapp" required placeholder="(00) 00000-0000" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
                 </div>
                 <div>
                   <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Melhor E-mail *</label>
-                  <input type="email" required placeholder="seu@email.com" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
+                  <input type="email" name="email" required placeholder="seu@email.com" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
                 </div>
                 <div>
                   <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome da Empresa *</label>
-                  <input type="text" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
+                  <input type="text" name="empresa" required placeholder="Sua Empresa LDA" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] font-medium transition-colors" />
                 </div>
               </div>
 
               <div className="mt-6">
-                <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Faturação Mensal *</label>
-                <select required defaultValue="" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] appearance-none font-medium transition-colors cursor-pointer">
+                <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Faturamento Mensal *</label>
+                <select name="faturamento" required defaultValue="" className="w-full px-4 py-3 border border-zinc-800 bg-black text-white focus:outline-none focus:border-[#FE4701] appearance-none font-medium transition-colors cursor-pointer">
                     <option value="" disabled>Selecione uma opção...</option>
-                    <option value="Até R$ 10.000">Até R$ 10.000</option>
-                    <option value="De R$ 10.000 a R$ 50.000">De R$ 10.000 a R$ 50.000</option>
-                    <option value="De R$ 50.000 a R$ 100.000">De R$ 50.000 a R$ 100.000</option>
-                    <option value="Acima de R$ 100.000">Acima de R$ 100.000</option>
+                    <option value="Abaixo de 10k">Abaixo de 10k</option>
+                    <option value="10k a 50k">10k a 50k</option>
+                    <option value="Acima de 50k">Acima de 50k</option>
                 </select>
               </div>
 
