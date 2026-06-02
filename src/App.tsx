@@ -134,7 +134,7 @@ function Home() {
     }
   ];
 
-  const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwti_tIT08qsIjUJ0XBco5SGTZLGqGi9ME2wZ5numJA0gYtEdX6wNxQ5p8f1rI2a4Qh/exec';
+  const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwVvlavLElgNP9l_UNssPRV6RPwEKgAG6iw2Lkc28WAfnOATMVvUDCz2EyD__EhKh_u/exec';
 
   const handleFormSubmit = async (e: any) => {
     e.preventDefault(); // Impede a página de piscar/recarregar
@@ -149,31 +149,18 @@ function Home() {
       
       console.log("✅ 3. Iniciando disparo para o Webhook...");
       
-      // Converte os dados do formulário para o formato URL Encoded, 
-      // que é o mais bem aceito nativamente pelo Google Apps Script.
-      const data = new URLSearchParams();
+      const formBody = new URLSearchParams();
       for (const [key, value] of formData.entries()) {
-        data.append(key, value.toString());
+        formBody.append(key, value.toString());
       }
-      
-      // Como o ambiente bloqueia o fetch com 'mode: no-cors' lançando o erro 'nativeFetch is not a function',
-      // vamos usar a API nativa XMLHttpRequest que opera em um nível mais baixo e não sofre essa interceptação.
+
       await new Promise((resolve) => {
         const xhr = new XMLHttpRequest();
-        xhr.open("POST", URL_WEBHOOK, true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        
-        xhr.onload = () => {
-          resolve(true);
-        };
-        
-        xhr.onerror = () => {
-          // Erros de CORS são comuns com o Google Apps Script, mas o POST é consumido pela planilha mesmo assim.
-          // Por isso resolvemos a promise ignorando o erro de rede.
-          resolve(true);
-        };
-        
-        xhr.send(data.toString());
+        xhr.open('POST', URL_WEBHOOK, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = () => resolve(true);
+        xhr.onerror = () => resolve(true);
+        xhr.send(formBody.toString());
       });
       
       console.log("✅ 4. Requisição finalizada!");
