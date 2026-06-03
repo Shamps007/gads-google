@@ -146,38 +146,25 @@ function Home() {
     try {
       const form = e.target;
       const formData = new FormData(form);
+      const dados = Object.fromEntries(formData.entries());
       
-      console.log("✅ 3. Iniciando disparo para o Webhook...");
-      
-      const formBody = new URLSearchParams();
-      for (const [key, value] of formData.entries()) {
-        formBody.append(key, value.toString());
-      }
+      console.log("✅ 3. Iniciando disparo para o Webhook (usando fetch simples com no-cors)...");
 
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', URL_WEBHOOK, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        
-        xhr.onload = function() {
-          resolve(); 
-        };
-        
-        xhr.onerror = function() {
-          resolve(); 
-        };
-        
-        xhr.send(formBody.toString());
+      await fetch(URL_WEBHOOK, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
       });
       
-      console.log("✅ 4. Requisição XHR disparada. Redirecionando para /obrigado...");
+      console.log("✅ 4. Envio disparado. Redirecionando para /obrigado...");
       form.reset();
       setIsSubmitting(false);
       navigate("/obrigado");
       
     } catch (error) {
-      alert("Erro ao enviar. Verifique sua conexão e tente novamente.");
-      console.error("❌ ERRO GRAVE:", error);
+      console.error("❌ Erro:", error);
+      alert("Erro ao enviar. Tente novamente.");
       setIsSubmitting(false);
       console.log("✅ 5. Botão voltou ao normal.");
     }
