@@ -138,7 +138,7 @@ function Home() {
 
   const handleIframeLoad = () => {
     if (isSubmitting) {
-      window.location.href = '/obrigado';
+      navigate('/obrigado');
     }
   };
 
