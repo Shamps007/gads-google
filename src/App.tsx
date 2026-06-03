@@ -154,13 +154,13 @@ function Home() {
         formBody.append(key, value.toString());
       }
 
-      await new Promise((resolve) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', URL_WEBHOOK, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        xhr.onload = () => resolve(true);
-        xhr.onerror = () => resolve(true);
-        xhr.send(formBody.toString());
+      await fetch(URL_WEBHOOK, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formBody.toString()
       });
       
       console.log("✅ 4. Requisição finalizada!");
