@@ -161,7 +161,9 @@ function Home() {
             <a href="#metodo" className="hover:text-white transition-colors">MÉTODO GADS</a>
           </nav>
           <a 
-            href="#contato" 
+            href="https://wa.me/554888678207?text=Ol%C3%A1%2C%20gostaria%20de%20saber%20mais%20sobre%20seu%20servi%C3%A7o%21" 
+            target="_blank" 
+            rel="noopener noreferrer"
             className="bg-[#FE4701] text-white px-6 py-2.5 font-bold text-sm tracking-widest uppercase hover:bg-white hover:text-black transition-colors border border-[#FE4701]"
           >
             CONTATO
@@ -321,12 +323,13 @@ function Home() {
                     <option value="" disabled>Selecione uma opção...</option>
                     <option value="Abaixo de 10k">Abaixo de 10k</option>
                     <option value="10k a 50k">10k a 50k</option>
-                    <option value="Acima de 50k">Acima de 50k</option>
+                    <option value="50k a 100k">50k a 100k</option>
+                    <option value="100k+">100k +</option>
                 </select>
               </div>
 
               <button type="submit" disabled={isSubmitting} className="w-full mt-8 bg-[#FE4701] text-white px-8 py-4 font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors disabled:opacity-50">
-                {isSubmitting ? "Enviando..." : "Quero Receber Contacto"}
+                {isSubmitting ? "Enviando..." : "Quero Receber Contato"}
               </button>
             </form>
           </div>
