@@ -136,37 +136,9 @@ function Home() {
 
   const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwAggXrO7YxxcX7mJWFEzeK7_ODDlcSIaESde3sO3dZp6vRA6vbLFpsz0xIroxmr9k3/exec';
 
-  const handleFormSubmit = async (e: any) => {
-    e.preventDefault(); // Impede a página de piscar/recarregar
-    console.log("✅ 1. O botão foi clicado!"); 
-
-    setIsSubmitting(true);
-    console.log("✅ 2. Estado alterado para Enviando...");
-
-    try {
-      const form = e.target;
-      const formData = new FormData(form);
-      const dados = Object.fromEntries(formData.entries());
-      
-      console.log("✅ 3. Iniciando disparo para o Webhook (usando fetch simples com no-cors)...");
-
-      await fetch(URL_WEBHOOK, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dados)
-      });
-      
-      console.log("✅ 4. Envio disparado. Redirecionando para /obrigado...");
-      form.reset();
-      setIsSubmitting(false);
-      navigate("/obrigado");
-      
-    } catch (error) {
-      console.error("❌ Erro:", error);
-      alert("Erro ao enviar. Tente novamente.");
-      setIsSubmitting(false);
-      console.log("✅ 5. Botão voltou ao normal.");
+  const handleIframeLoad = () => {
+    if (isSubmitting) {
+      window.location.href = '/obrigado';
     }
   };
 
@@ -322,7 +294,8 @@ function Home() {
               <p className="font-medium text-zinc-400">Preencha os dados abaixo e entraremos em contato em até 24h.</p>
             </div>
             
-            <form onSubmit={handleFormSubmit} className="relative z-10">
+            <iframe name="hidden_iframe" id="hidden_iframe" style={{ display: 'none' }} onLoad={handleIframeLoad}></iframe>
+            <form action={URL_WEBHOOK} method="POST" target="hidden_iframe" onSubmit={() => setIsSubmitting(true)} className="relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block mb-2 font-bold uppercase text-xs tracking-wide text-zinc-500">Nome Completo *</label>
