@@ -134,7 +134,7 @@ function Home() {
     }
   ];
 
-  const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzKlO2ZoBhomxh9oZM10oYfHpfRDJhd6eyENaGB4RYRrUE_BG_mY8Q4Z70DaIXbgjr0/exec';
+  const URL_WEBHOOK = 'https://script.google.com/macros/s/AKfycbzJR-vZmSJ9-8uKHGaLqnA-y04DCQAEIUIx0D4rEU9q3jpAc2J0xUjCYoFPQsjQKTHL/exec';
 
   const handleFormSubmit = async (e: any) => {
     e.preventDefault(); // Impede a página de piscar/recarregar
@@ -154,29 +154,26 @@ function Home() {
         formBody.append(key, value.toString());
       }
 
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', URL_WEBHOOK, true);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-
-      xhr.onload = function() {
-        console.log("✅ 4. Requisição finalizada!");
-        alert("Dados enviados com sucesso! Entraremos em contato em até 24h.");
-        form.reset();
-        setIsSubmitting(false);
-        console.log("✅ 5. Botão voltou ao normal.");
-        navigate("/obrigado");
-      };
-
-      xhr.onerror = function() {
-        console.log("✅ 4. Requisição disparada! (Ignorando erro de CORS esperado)");
-        alert("Dados enviados com sucesso! Entraremos em contato em até 24h.");
-        form.reset();
-        setIsSubmitting(false);
-        console.log("✅ 5. Botão voltou ao normal.");
-        navigate("/obrigado");
-      };
-
-      xhr.send(formBody.toString());
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', URL_WEBHOOK, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        
+        xhr.onload = function() {
+          resolve(); 
+        };
+        
+        xhr.onerror = function() {
+          resolve(); 
+        };
+        
+        xhr.send(formBody.toString());
+      });
+      
+      console.log("✅ 4. Requisição XHR disparada. Redirecionando para /obrigado...");
+      form.reset();
+      setIsSubmitting(false);
+      navigate("/obrigado");
       
     } catch (error) {
       alert("Erro ao enviar. Verifique sua conexão e tente novamente.");
