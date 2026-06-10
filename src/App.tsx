@@ -138,6 +138,9 @@ function Home() {
 
   const handleIframeLoad = () => {
     if (isSubmitting) {
+      if ((window as any).fbq) {
+        (window as any).fbq('track', 'Lead');
+      }
       navigate('/obrigado');
     }
   };
